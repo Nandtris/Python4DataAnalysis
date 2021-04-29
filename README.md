@@ -1,13 +1,18 @@
 # Python4DataAnalysis 2ed
 
 ## 4 Numpy 基础
-- ndarry Numpy 对象
- - shape 代表维度
- - dtype 代表类型
-"""
-import numpy as np
-
-data1 = np.array([1, 2, 3,], [4, 5, 6])
-data1.shape #查看维度
-data1.dtype #查看类型
-"""
+- numpy: ndarray 多维数组对象
+- 数学运算
+  - data = np.random.randn(2,3)
+  - data + data, data * 10
+- Creat ndarraay
+  - `data1 = np.array([1, 2, 3,], [4, 5, 6])`
+- Method
+  - shape 代表维度
+  - dtype 代表类型
+  - array
+  - arange
+  - random.randn()
+  - ones
+  - zeros
+  - empty
