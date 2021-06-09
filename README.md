@@ -16,3 +16,8 @@
   - ones
   - zeros
   - empty
+
+## 11 时间序列
+- pandas最基本的时间序列类型就是以时间戳（通常以Python字符串或datatime对象表示）为索引的Series
+- TimeStamp可以随时自动转换为datetime对象
+- 
