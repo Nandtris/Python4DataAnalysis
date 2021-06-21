@@ -1,5 +1,5 @@
 # Python4DataAnalysis 2ed
-# online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
+online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 
 ## 4 Numpy 基础
 - numpy: ndarray 多维数组对象
@@ -112,7 +112,7 @@
     - `pd.period_range('2006-12-03', '2021-12-09', freq='M') # 产生 periodindex 类`
     - PeriodIndex类保存了一组Period，它可以在任何pandas数据结构中被用作轴索引
 - 频率转换
-  - `pd.periods(2017, freq='A-DEC').asfreq('M', how='start') # Period('2007-01', 'M')'
+  - `pd.Period(2017, freq='A-DEC').asfreq('M', how='start') # Period('2007-01', 'M')'
 - 按季度计算的时期频率 Q-JAN到Q-DEC
   - 时间戳与时期转换：to_timestamp() to_period()
   ``` Python
@@ -130,7 +130,10 @@
   data.index = index
   data.infl
   ```
-  
+### 11.6  重采样及频率转换
+- esample 各种频率转换工作的主力函数。
+- resample有一个类似于groupby的API，调用resample可以分组数据，然后可调用一个聚合函数
+
   
 ## 12 Advanced pandas
 ### 1 Categorical Type in pandas
