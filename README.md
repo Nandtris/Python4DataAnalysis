@@ -87,7 +87,20 @@
   ts.groupby(offset.rollforward).mean()
   ts.resample('M').mean() # 效果同上
   ```
-  
+### Time Zone
+- pd.Series.tz_localize('UTC')
+- pd.Series.tz_converse('Eroupe/Berlin')
+- pandas 时间序列默认为单纯时间(native)，时区为 None,
+- 将时间本地化(localize)后，就可以转变(converse)其他时区
+- Timestamp
+  - `stamp_utc = pd.Timestamp('2011-03-12 04:00', tz='UTC').tz_convert('Asia/Shanghai')`
+  - `stamp_NY = pd.Timestamp('2011-03-12 04:00').tz_localize('UTC').tz_convert('America/New_York')`
+  - Timestamp对象在内部保存了一个UTC时间戳值（自UNIX纪元（1970年1月1日）算起的纳秒数）,
+  - 这个UTC值在时区转换过程中是不会发生变化的
+    - `stamp_utc.value == stamp_NY # True`
+  - 如果两个时间序列的时区不同，在将它们合并到一起时，最终结果就会是UTC,
+  - 由于时间戳其实是以UTC存储的，所以这是一个很简单的运算，并不需要发生任何转换
+
 ## 12 Advanced pandas
 ### 1 Categorical Type in pandas
 - 
