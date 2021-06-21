@@ -105,17 +105,33 @@
 
 ### 11.5 时期及其算术运算
 - periods
-  - p = pd.period(2017, 'A-DEC') # Period('2007', 'A-DEC')
+  - `p = pd.period(2017, 'A-DEC') # Period('2007', 'A-DEC')`
   - 从2007年1月1日到2007年12月31日之间的整段时间
-  -  p + 5 # Period('2022', 'A-DEC')
+  -  `p + 5 # Period('2022', 'A-DEC')`
   -  period_range
-    - pd.period_range('2006-12-03', '2021-12-09', freq='M') # 产生 periodindex 类
+    - `pd.period_range('2006-12-03', '2021-12-09', freq='M') # 产生 periodindex 类`
     - PeriodIndex类保存了一组Period，它可以在任何pandas数据结构中被用作轴索引
 - 频率转换
   - `pd.periods(2017, freq='A-DEC').asfreq('M', how='start') # Period('2007-01', 'M')'
 - 按季度计算的时期频率 Q-JAN到Q-DEC
-
-
+  - 时间戳与时期转换：to_timestamp() to_period()
+  ``` Python
+  p = pd.Period('2019Q4', freq='Q-JAN')  # Period('2012Q4', 'Q-JAN')
+  p.asfreq('D', 'start')  # Period('2011-11-01', 'D')
+  # 该季度倒数第二个工作日下午4点的时间戳
+  # Period('2012-01-30 16:00', 'T')
+  p4pm = (p.asfreq('B', 'e')-1).asfreq('T', 's') + 16*60 # e~end, s~start
+  p4pm.to_timestamp() # Timestamp('2014-01-30 16:00:00')
+  ```
+- 通过数组创建PeriodIndex(合并大数据集中的分开的时间列)
+  ```Python
+  data = pd.read_csv()
+  index = data.PeriodIndex(year=data.year, quarter=data.quarter, freq='Q-DEC')
+  data.index = index
+  data.infl
+  ```
+  
+  
 ## 12 Advanced pandas
 ### 1 Categorical Type in pandas
 - 
