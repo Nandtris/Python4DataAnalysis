@@ -1,4 +1,5 @@
 # Python4DataAnalysis 2ed
+# online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 
 ## 4 Numpy 基础
 - numpy: ndarray 多维数组对象
@@ -87,7 +88,7 @@
   ts.groupby(offset.rollforward).mean()
   ts.resample('M').mean() # 效果同上
   ```
-### Time Zone
+### 11.4 Time Zone
 - pd.Series.tz_localize('UTC')
 - pd.Series.tz_converse('Eroupe/Berlin')
 - pandas 时间序列默认为单纯时间(native)，时区为 None,
@@ -100,6 +101,20 @@
     - `stamp_utc.value == stamp_NY # True`
   - 如果两个时间序列的时区不同，在将它们合并到一起时，最终结果就会是UTC,
   - 由于时间戳其实是以UTC存储的，所以这是一个很简单的运算，并不需要发生任何转换
+
+
+### 11.5 时期及其算术运算
+- periods
+  - p = pd.period(2017, 'A-DEC') # Period('2007', 'A-DEC')
+  - 从2007年1月1日到2007年12月31日之间的整段时间
+  -  p + 5 # Period('2022', 'A-DEC')
+  -  period_range
+    - pd.period_range('2006-12-03', '2021-12-09', freq='M') # 产生 periodindex 类
+    - PeriodIndex类保存了一组Period，它可以在任何pandas数据结构中被用作轴索引
+- 频率转换
+  - `pd.periods(2017, freq='A-DEC').asfreq('M', how='start') # Period('2007-01', 'M')'
+- 按季度计算的时期频率 Q-JAN到Q-DEC
+
 
 ## 12 Advanced pandas
 ### 1 Categorical Type in pandas
