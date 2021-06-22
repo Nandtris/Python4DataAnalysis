@@ -158,7 +158,28 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   frame.resample('D').ffill(limit=2) # 从前面采样填充值
   frame.resample('W-THU').ffill()
   ```
-  
+### 11.7 moving window function
+```python
+DataFrame.rolling(window, min_periods=None, center=False, win_type=None, 
+                  on=None, axis=0, closed=None)
+# 链接：https://www.jianshu.com/p/b8c795345e93
+
+rolling(5, min_periods=2).mean()
+# 处理缺失值问题
+# 最小观测值 min_periods 参数 从最小 2 开始计算累计均值，一直到 5，
+# 而后再开始按照每个窗口5个值依次滑动
+
+01 None
+02 mean = (02 + 03)/ 2 = 7.425
+03 mean = (02 + 03 + 06) / 3 = 7.433333
+04 mean = (02 + 03 + 06 + 07) / 4 = 7.432500
+
+DataFrame.expanding(min_periods = 1，center = False，axis = 0)
+# rolling()函数，是固定窗口大小，进行滑动计算，
+# expanding()函数只设置最小的观测值数量，不固定窗口大小，实现累计计算，即不断扩展；
+# expanding()函数，类似cumsum()函数的累计求和，其优势在于还可以进行更多的聚类计算；
+```
+
 ## 12 Advanced pandas
 ### 1 Categorical Type in pandas
 - 
