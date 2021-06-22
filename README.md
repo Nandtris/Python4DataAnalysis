@@ -133,7 +133,31 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 ### 11.6  重采样及频率转换
 - esample 各种频率转换工作的主力函数。
 - resample有一个类似于groupby的API，调用resample可以分组数据，然后可调用一个聚合函数
-
+  ```Python
+  rng = pd.date_range('2000-01-01', periods=100, freq='D')
+  ts = pd.Series(np.random.randn(len(rng)), index=rng)
+  ts.resample('M').mean()
+  ts.resample(;M', kind='period').mean()
+  ```
+- 降采样
+  ```Python
+  rng = pd.date_range('2000-01-01', periods=12, freq='T')
+  ts = pd.Series(np.arange(len(rng)), index=rng)
+  # 以左边界index 为 label，计数数据包含左边界，不包含右边界
+  ts.resample("5min").sum() 
+  # 5min内，包含右边界，以右边界为label,但偏移-1秒
+  ts.resample('5min', closed='right', label='right', loffset='-1s').sum() 
+  ```
+- 升采样和插值
+  ```Python
+  frame = pd.DataFrame(np.random.randn(2, 4),
+                     index = pd.date_range('01/01/2000', periods=2, freq='W-WED'),
+                     columns = ['Beijing', 'Shanghai', 'Guangzhou', 'Hangzhou'])
+  # 以天为周期插值采样
+  df_daily = frame.resample('D').asfreq()
+  frame.resample('D').ffill(limit=2) # 从前面采样填充值
+  frame.resample('W-THU').ffill()
+  ```
   
 ## 12 Advanced pandas
 ### 1 Categorical Type in pandas
