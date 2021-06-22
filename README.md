@@ -18,8 +18,25 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   - zeros
   - empty
 
-## 11 时间序列
 
+
+## 10 数据聚合与分组
+
+将数据集加载、融合、准备好之后，通常就是计算分组统计或生成透视表。<br>
+pandas提供了一个灵活高效的gruopby功能，它使你能以一种自然的方式对数据集进行切片、切块、摘要等操作。<br>
+- 使用一个或多个键（形式可以是函数、数组或DataFrame列名）分割pandas对象;
+- 计算分组的概述统计，比如数量、平均值或标准差，或是用户定义的函数;
+- 应用组内转换或其他运算，如规格化、线性回归、排名或选取子集等;
+- 计算透视表或交叉表;
+- 执行分位数分析以及其它统计分组分析
+- 对时间序列数据的聚合(ch11)
+
+### 10.1 聚合与分组运算
+
+
+
+## 11 时间序列
+对时间序列数据的聚合（groupby的特殊用法之一）也称作重采样（resampling）<br>
 - time Series
   - timestamp  特定的时刻
   - periods    如2007年1月或2010年全年
@@ -159,26 +176,26 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   frame.resample('W-THU').ffill()
   ```
 ### 11.7 moving window function
-```python
-DataFrame.rolling(window, min_periods=None, center=False, win_type=None, 
-                  on=None, axis=0, closed=None)
-# 链接：https://www.jianshu.com/p/b8c795345e93
+  ```python
+  DataFrame.rolling(window, min_periods=None, center=False, win_type=None, 
+                    on=None, axis=0, closed=None)
+  # 链接：https://www.jianshu.com/p/b8c795345e93
 
-rolling(5, min_periods=2).mean()
-# 处理缺失值问题
-# 最小观测值 min_periods 参数 从最小 2 开始计算累计均值，一直到 5，
-# 而后再开始按照每个窗口5个值依次滑动
+  rolling(5, min_periods=2).mean()
+  # 处理缺失值问题
+  # 最小观测值 min_periods 参数 从最小 2 开始计算累计均值，一直到 5，
+  # 而后再开始按照每个窗口5个值依次滑动
 
-01 None
-02 mean = (02 + 03)/ 2 = 7.425
-03 mean = (02 + 03 + 06) / 3 = 7.433333
-04 mean = (02 + 03 + 06 + 07) / 4 = 7.432500
+  01 None
+  02 mean = (02 + 03)/ 2 = 7.425
+  03 mean = (02 + 03 + 06) / 3 = 7.433333
+  04 mean = (02 + 03 + 06 + 07) / 4 = 7.432500
 
-DataFrame.expanding(min_periods = 1，center = False，axis = 0)
-# rolling()函数，是固定窗口大小，进行滑动计算，
-# expanding()函数只设置最小的观测值数量，不固定窗口大小，实现累计计算，即不断扩展；
-# expanding()函数，类似cumsum()函数的累计求和，其优势在于还可以进行更多的聚类计算；
-```
+  DataFrame.expanding(min_periods = 1，center = False，axis = 0)
+  # rolling()函数，是固定窗口大小，进行滑动计算，
+  # expanding()函数只设置最小的观测值数量，不固定窗口大小，实现累计计算，即不断扩展；
+  # expanding()函数，类似cumsum()函数的累计求和，其优势在于还可以进行更多的聚类计算；
+  ```
 
 ## 12 Advanced pandas
 ### 1 Categorical Type in pandas
