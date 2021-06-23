@@ -36,6 +36,7 @@ pandas提供了一个灵活高效的gruopby功能，它使你能以一种自然�
 - 列表或数组，其长度与待分组的轴一样
 - 字典或Series，给出待分组轴上的值与分组名之间的对应关系
 - 函数，用于处理轴索引或索引中的各个标签
+- Groupby
 ```Python
 df = pd.DataFrame({'data1': np.random.randn(5),
                   'data2': np.random.randn(5),
@@ -53,10 +54,7 @@ for name, group in grouped:
 
 # Series 分组键
 grouped = df['data1'].groupby(df['key1'], df['key2']).mean()
-# 分组键可以是任意适合长度的数组
-states = np.array(['Shanghai', 'Shanghai', 'Beijing', 'Shanghai', 'Shanghai'])
-years = np.array([2005, 2005, 2006, 2005, 2006])
-df['data1'].groupby([states, years]).mean()
+
 # 结果中没有key2列
 # 这是因为df[‘key2’]不是数值数据
 # 默认情况下，所有数值列都会被聚合
@@ -67,7 +65,54 @@ df.groupby(['key1', 'key2']).size()
 # 把数据片段组成一个字典
 pieces = dict(list(df.groupby('key1')))
 ```
+- 选取列、列地子集
+```Python
+df.groupby('key1')['data1'].mean() # Series
+# ≈
+df[['data1']].groupby(df['key1']).mean() # DataFrame
+```
 
+- 分组依据
+  - 数组
+    ```Python
+    # 分组键可以是任意适合长度的数组
+    states = np.array(['Shanghai', 'Shanghai', 'Beijing', 'Shanghai', 'Shanghai'])
+    years = np.array([2005, 2005, 2006, 2005, 2006])
+    df['data1'].groupby([states, years]).mean()
+    ```
+  - 字典或Series
+    ```Python
+    # dict & Series
+    people = pd.DataFrame(np.random.randn(5, 5),
+                          columns = ['a', 'b', 'c', 'd', 'e'],
+                          index = ['Joe', 'Steve', 'Wes', 'Jim', 'Travis'])
+    people.iloc[2:3, [1, 2]] = np.nan
+    mapping = {'a': 'red', 'b': 'red', 'c': 'blue', 'e': 'red', 'f': 'orange'}
+    by_column = people.groupby(mapping, axis=1).sum()
+    by_column
+    
+    # Series
+    map_series = pd.Series(mapping)
+    people.groupby(map_series, axis=1).count()
+    ```
+    
+  - 函数
+    ```Pyrthon
+    key_list = ['one', 'one', 'one', 'two', 'two']
+    people.groupby([len, key_list]).min()
+    ```
+    
+  - 索引级别
+  
+    ```Python
+    # 层次化索引
+    columns = pd.MultiIndex.from_arrays([['US', 'US', 'US', 'JP', 'JP'],
+                                    [1, 3, 5, 1, 3]],
+                                    names = ['cty', 'tenor'])
+    hier_df = pd.DataFrame(np.random.randn(4, 5), columns = columns)
+    # 要根据级别分组，使用level关键字传递级别序号或名字
+    hier_df.groupby(level='cty', axis=1).count()
+    ```
 
 ## 11 时间序列
 对时间序列数据的聚合（groupby的特殊用法之一）也称作重采样（resampling）<br>
