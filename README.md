@@ -114,6 +114,52 @@ df[['data1']].groupby(df['key1']).mean() # DataFrame
     hier_df.groupby(level='cty', axis=1).count()
     ```
 
+### 10.2 数据聚合
+- GroupBy 
+  - 自定义聚合函数，性能开销大
+    - aggregate/agg
+    ```Python
+    def peak_to_peak(arr):
+        return arr.max() - arr.min()
+    df.groupby('key1').agg(peak_to_peak)
+    ```
+- 面向列的多函数应用
+  ```Python
+  tips = pd.read_csv('examples/tips.csv')
+  tips['tip_pct'] = tips['tip'] / tips['total_bill']
+  
+  # agg 自定义函数
+  grouped = tips.groupby(['day', 'smoker'])
+  grouped_pct = grouped['tip_pct']
+  grouped_pct.agg('mean')
+  
+  # 一列应用一组聚合函数
+  grouped_pct.agg(['mean', 'std', peak_to_peak])
+  # 以元组形式自定义聚合后列名
+  grouped_pct.agg([('foo', 'mean'), ('bar', np.std)]) # foo 替换 mean 列名
+  
+  # DataFrame 类似以上
+  functions = ['count', 'mean', 'max']
+  result = grouped['tip_pct', 'total_bill'].agg(fuctions) # 形成层次化列
+  # 自定义列名
+  ftuples = [('feng', 'mean'), ('jing', np.var)]
+  grouped['tip_pct', 'total_bill').agg(ftuples)
+  
+  # 不同列应用不同的函数
+  grouped.agg({'tip': np.max, 'size': 'sum'})
+  # 同列应用不同函数
+  grouped.agg({'tip_pct': ['min', 'max', 'mean', 'std'],
+               'size': 'sum'})
+  ```
+- 以“没有行索引”的形式返回聚合数据
+  
+  
+  
+  
+  
+  - 优化后的聚合函数
+    - min max std var sum mean prod last first count median
+
 ## 11 时间序列
 对时间序列数据的聚合（groupby的特殊用法之一）也称作重采样（resampling）<br>
 - time Series
