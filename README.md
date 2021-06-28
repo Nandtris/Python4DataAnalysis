@@ -153,12 +153,40 @@ df[['data1']].groupby(df['key1']).mean() # DataFrame
   ```
 - 以“没有行索引”的形式返回聚合数据
   
+- 优化后的聚合函数
+  - min max std var sum mean prod last first count median
+
+### 10.3 Apply
+- # agg apply区别？？？#
+  ```Python
+  def top(df, n=5, column='tip_pct'):
+    return df.sort_values(by=column)[-n:]
   
+  tips = pd.read_csv('examples/tips.csv')
+  tips['tip_pct'] = tips['tip'] / tips['total_bill']
   
+  tips.groupby('smoker').apply(top)
+  tips.groupby(['smoker','day']).apply(top, n=1, column='total_bill')
+  ```
+- 禁止分组
+  `tips.groupby('smoker', group_keys=False).apply(top)`
+- 分位数
+  ```Python
+  frame = pd.DataFrame({'data1': np.random.randn(1000), 'data2': np.random.randn(1000)})
   
+  quartiles = pd.cut(frame.data1, 4)
+  def get_statas(group):
+      return {'min': group.min(), 'max': group.max(), 
+             'count': group.count(), 'mean': group.mean()}
+             
+  frame.data2.groupby(quartiles).apply(get_statas).unstack()
   
-  - 优化后的聚合函数
-    - min max std var sum mean prod last first count median
+  grouping = pd.qcut(frame.data1, 10, labels=False)
+  grouped = frame.data2.groupby(grouping)
+  grouped.apply(get_statas)
+  ```
+
+
 
 ## 11 时间序列
 对时间序列数据的聚合（groupby的特殊用法之一）也称作重采样（resampling）<br>
