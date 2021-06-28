@@ -157,7 +157,7 @@ df[['data1']].groupby(df['key1']).mean() # DataFrame
   - min max std var sum mean prod last first count median
 
 ### 10.3 Apply
-- # agg apply区别？？？#
+- agg apply区别？？？
   ```Python
   def top(df, n=5, column='tip_pct'):
     return df.sort_values(by=column)[-n:]
@@ -185,8 +185,23 @@ df[['data1']].groupby(df['key1']).mean() # DataFrame
   grouped = frame.data2.groupby(grouping)
   grouped.apply(get_statas)
   ```
-
-
+### 10.4 pivot_table cross_tabulation
+- picot_table
+```pd.pivot_table(data, values=None, index=None, columns=None, 
+                  aggfunc='mean', fill_value=None, margins=False, 
+                  dropna=True, margins_name='All')
+```
+- example
+```Python
+tips.pivot_table(['tip', 'total_bill'], index=['time', 'day'], 
+                 columns='smoker', margins=True)
+                 
+tips.pivot_table('tip_pct', index=['time', 'smoker'], columns='day',
+                 aggfunc=len, margins=True)
+                 
+tips.pivot_table('tip_pct', index=['time', 'size', 'smoker'], 
+                 columns='day', aggfunc='mean', margins=True, fill_value=0)
+```
 
 ## 11 时间序列
 对时间序列数据的聚合（groupby的特殊用法之一）也称作重采样（resampling）<br>
