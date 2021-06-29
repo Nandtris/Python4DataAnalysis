@@ -2,12 +2,27 @@
 online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 
 ## 4 Numpy 基础
-- numpy: ndarray 多维数组对象
-- 数学运算
-  - data = np.random.randn(2,3)
-  - data + data, data * 10
+### 10.1 numpy: ndarray 
+- import numpy as np
+- NumPy N维数组对象（即ndarray, 是一个快速而灵活的大数据集容器。
+- 你可以利用这种数组对整块数据执行一些数学运算，其语法跟标量元素之间的运算一样。
+- ndarray 其中的所有元素必须是相同类型的。
+- 每个数组都有一个shape（一个表示各维度大小的元组）和一个dtype（一个用于说明数组数据类型的对象）
+- 本书中“数组”、“NumPy数组”、”ndarray”时，基本上都指的是同一样东西，即ndarray对象
+  ```Python
+  data = np.random.randn(2,3)
+  data + data, data * 10
+  data.shape # (2, 3)
+  data.dtype # dtype('float64')
+  data.ndim  # 2 
+  ```
 - Creat ndarraay
-  - `data1 = np.array([1, 2, 3,], [4, 5, 6])`
+  ```Python
+  data2 = np.array([1, 2, 3,], [4, 5, 6])
+  np.zeros(10)
+  np.empty((2, 3, 2))
+  np.arange(15)
+  ```
 - Method
   - shape 代表维度
   - dtype 代表类型
@@ -17,8 +32,24 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   - ones
   - zeros
   - empty
-
-
+- ndarray dtype
+  ```Python
+  # dtype 指定ndarray数据类型
+  arr = np.array(np.random.randn(9), dtype=np.float64)
+  # 转换数据类型
+  int_arr = arr.astype(np.int32)
+  ```
+- numpy 数组运算
+  - 数组使你不用编写循环即可对数据执行批量运算。
+  - NumPy用户称其为矢量化（vectorization）。
+  - 
+  - 大小相等的数组之间的任何算术运算都会将运算应用到元素级别
+  - 大小相同的数组之间的比较会生成布尔值数组
+  - 数组与标量的算术运算会将标量值传播到各个元素
+  - 不同大小的数组之间的运算叫做广播（broadcasting）
+  
+- Index and Slice
+  - 
 
 ## 10 数据聚合与分组
 
