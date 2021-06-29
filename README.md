@@ -62,11 +62,11 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
     ```
   - 二维数组
     - 各索引位置上的元素不再是标量而是一维数组
-    ```Python
-    arr2d = np.array([[1, 2 ,3], [4, 5, 6], [7, 8, 9]])
-    arr2d[2] # array([7, 8, 9])
-    arr2d[2][0] == arr2d[2, 0] # 7
-    ```
+      ```Python
+      arr2d = np.array([[1, 2 ,3], [4, 5, 6], [7, 8, 9]])
+      arr2d[2] # array([7, 8, 9])
+      arr2d[2][0] == arr2d[2, 0] # 7
+      ```
   - arr3d
     - 在多维数组中，如果省略了后面的索引，则返回对象会是一个维度低一点的ndarray
     ```Python
@@ -85,13 +85,42 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   - arr1d
   `arr[1:6] # like Python list`
   - arrNd
-    - 它是沿着第0轴（即第一个轴）切片的。
+    - `arr2d[:2]`它是沿着第0轴（即第一个轴）切片的。
     - 切片是沿着一个轴向选取元素的。
     - 表达式`arr2d[:2]`可以被认为是“选取arr2d的前两行”
     - 一次传入多个切片 `arr2d[:2, 1:]`,像这样进行切片时，只能得到相同维数的数组视图
     - 将整数索引和切片混合，可以得到低维度的切片 `arr2d[1, :2]` 选取第二行的前两列
     - “只有冒号”表示选取整个轴 `arr2d[:, :1]`
-  
+    - 对切片表达式的赋值操作也会被扩散到整个选区
+
+- 布尔型索引
+  - 通过布尔型索引选取数组中的数据，将总是创建数据的副本，即使返回一模一样的数组也是如此
+  - Python关键字and和or在布尔型数组中无效。要使用&与|
+    ```Python
+    names = np.array(['Bob', 'Joe', 'Will', 'Bob', 'Will', 'Joe', 'Joe'])
+    data = np.random.randn(7, 4)
+    names == 'Bob' # array([ True, False, False,  True, False, False, False])
+
+    # 布尔型数组的长度必须跟被索引的轴长度一致
+    data[names == 'Bob']
+    # 以将布尔型数组跟切片、整数（或整数序列，稍后将对此进行详细讲解）混合使用
+    data[names == 'Bob', 2:]
+
+    names != "Bob"
+    # 通过~对条件进行否定
+    data[~(names == "Bob")]
+    # 合应用多个布尔条件，使用&（和）、|（或）
+    mask = (names == "Bob") | (names == "Will")
+    data[mask]
+    # 通过布尔型数组设置值是一种经常用到的手段
+    data[data < 0] = 0
+    data[names != 'Joe'] = 7
+  ```
+- 花式索引
+  - 花式索引跟切片不一样，它总是将数据复制到新数组中。
+  - 
+
+
 ## 10 数据聚合与分组
 
 将数据集加载、融合、准备好之后，通常就是计算分组统计或生成透视表。<br>
