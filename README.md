@@ -115,11 +115,12 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
     # 通过布尔型数组设置值是一种经常用到的手段
     data[data < 0] = 0
     data[names != 'Joe'] = 7
-  ```
-- 花式索引
+    ```
+- 花式索引 Fancy indexing
+  - 利用整数数组进行索引
   - 花式索引跟切片不一样，它总是将数据复制到新数组中。
-  - 
-
+- 数组转置和轴对换
+- 
 
 ## 10 数据聚合与分组
 
