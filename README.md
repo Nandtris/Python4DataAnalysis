@@ -2,7 +2,7 @@
 online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 
 ## 4 Numpy 基础
-### 10.1 numpy: ndarray 
+### 4.1 numpy: ndarray 
 - import numpy as np
 - NumPy N维数组对象（即ndarray, 是一个快速而灵活的大数据集容器。
 - 你可以利用这种数组对整块数据执行一些数学运算，其语法跟标量元素之间的运算一样。
@@ -120,7 +120,26 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   - 利用整数数组进行索引
   - 花式索引跟切片不一样，它总是将数据复制到新数组中。
 - 数组转置和轴对换
-- 
+
+### 4.2 ufuncs
+- unary ufunc
+  - np.sqrt(arr)
+  - exp
+  - 
+- binary ufunc
+  - add
+  - maximum
+- modf
+  - 返回浮点数数组的小数和整数部分
+  ```Python
+  arr = np.random.randn(7) * 5
+  remainder, whole_part = np.modf(arr)
+- Ufuncs可以接受一个out可选参数，这样就能在数组原地进行操作
+  ```Python
+  np.sqrt(arr, arr) == arr == np.sqrt(arr) # Ture
+  ```
+  
+### 
 
 ## 10 数据聚合与分组
 
