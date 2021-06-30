@@ -186,7 +186,27 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   # array(['Bob', 'Joe', 'Will'], dtype='<U4')
   np.unique(names)
   ```
-  
+
+### 4.4 数组文件输入输出
+- np.save和np.load
+- np.savez可以将多个数组保存到一个未压缩文件中
+- 将数据压缩，可以使用numpy.savez_compressed
+  ```Python
+  arr = np.arange(10)
+  np.save('some_array', arr)
+  np.load('some_array.npy')
+
+  np.savez('array_archive.npz', a=arr, b=arr)
+  arch = np.load('array_archive.npz)
+  arch['b']
+
+  numpy.savez_compressed('array_archive.npz', a=arr, b=arr)
+  ```
+### 4.5 线性代数 点积
+### 4.6 
+
+
+
 
 ## 10 数据聚合与分组
 
