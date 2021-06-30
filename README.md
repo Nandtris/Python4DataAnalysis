@@ -139,7 +139,54 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   np.sqrt(arr, arr) == arr == np.sqrt(arr) # Ture
   ```
   
-### 
+### 4.3 利用数组进行数据处理
+- 用数组表达式代替循环的做法，通常被称为矢量化
+- 一般来说，矢量化数组运算要比等价的纯Python方式快上一两个数量级（甚至更多），尤其是各种数值计算
+- 广播，是一种针对矢量化计算的强大手段
+
+- 将条件逻辑表达为数组运算
+  - np.where
+  ```Python
+  # np.where 三元表达式 `x if condition else y`的矢量化版本
+  arr = np.random.rand(4, 4)
+  # 所有正值替换为2，将所有负值替换为－2 
+  np.where(arr > 0, 2, -2) 
+  # 所有正值替换为2， 其余值不变
+  np.where(arr > 0, 2, arr)
+  ```
+  
+- 数学和统计方法
+  - 通过数组上的一组数学函数对整个数组或某个轴向的数据进行统计计算
+  - sum、mean等聚合计算既可以当做数组的实例方法调用，也可以当做顶级NumPy函数使用
+  - `arr.mean(), np.mean(arr)`
+  - `arr.mean(axis=1)` 计算行的平均值 ？？？
+  - `arr.sum(axis=0)` 计算列的的和 ？？？
+  - `arr.cumsum(axis=0)` 多维数组，沿着0轴累加
+  - `arr.cumprod(axis=1)` 多维数组，沿着1轴累积
+- 用于布尔型数组的方法
+  - 布尔值会被强制转换为1（True）和0（False）
+  - sum经常被用来对布尔型数组中的True值计数
+  ```Pyhton
+  arr = np.random.randn(100)
+  np.sum(arr > 0) # number of positive values
+  ```
+  - `any` 测试数组中是否存在一个或多个True
+  - `all` 检查数组中所有值是否都是True
+  - 这两个方法也能用于非布尔型数组，所有非0元素将会被当做True
+ 
+- sort
+  - `arr.sort(1)`就地排序则会修改数组本身, 1~轴向
+  - 顶级方法np.sort返回的是数组的已排序副本
+
+- 唯一化以及其它的集合逻辑
+  ```Python
+  names = np.array(['Bob', 'Joe', 'Will', 'Bob', 'Will', 'Joe', 'Joe'])
+  
+  # 找出数组中的唯一值并返回已排序的结果
+  # array(['Bob', 'Joe', 'Will'], dtype='<U4')
+  np.unique(names)
+  ```
+  
 
 ## 10 数据聚合与分组
 
