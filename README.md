@@ -203,8 +203,14 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   numpy.savez_compressed('array_archive.npz', a=arr, b=arr)
   ```
 ### 4.5 线性代数 点积
-### 4.6 
-
+### 4.6 伪随机数
+- 伪随机数，都是通过算法基于随机数生成器种子，在确定性的条件下生成的
+- 用`np.random.seed`更改全局随机数生成种子 `np.random.seed(1234)`
+- 避免全局状态，使用`numpy.random.RandomState`创建一个与其它隔离的随机数生成器
+  ```Python
+  rng = np.random.RandomState(1234)
+  rng.randn(5)
+  ```
 
 
 
