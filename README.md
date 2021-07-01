@@ -249,7 +249,68 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   - `isnull`和`notnull`函数可用于检测缺失数据 `obj4.isnull(), pd.notnull(obj4)`
 
 - DataFrame
+  - DataFrame是一个表格型的数据结构
+  - DataFrame既有行索引也有列索引
+  - DataFrame中的数据是以一个或多个二维块存放的（而不是列表、字典或别的一维数据结构）
+  - 建DataFrame,方法之一直接传入一个由等长列表或NumPy数组组成的字典
+    ```Python
+    data = {'state': ['Ohio', 'Ohio', 'Ohio', 'Nevada', 'Nevada', 'Nevada'],
+            'year': [2000, 2001, 2002, 2001, 2002, 2003],
+            'pop': [1.8, 1.3, 1.3, 1.9, 1.4, 1.7]}
+    frame = pd.DataFrame(data) # 按字典给出顺序排列DataFrame
+    
+    # 指定列顺序
+    pd.DataFrame(data, columns=['pop', 'year', 'state'])
+    
+    # 缺失值 data中找不到数据的列，结果中填入缺失值 NaN
+    frame2 = pd.DataFrame(data, columns=['state', 'year', 'pop', 'debt'], 
+                          index = ['one', 'two', 'three', 'four', 'five', 'six'])
+    
+    # 字典标记方式取值，DataFrame的列获取为一个Series, name属性也设置好了
+    frame2['state']
+    frame2['state'].name # 'state'
+    
+    # frame2[column]适用于任何列的名，
+    # frame2.column 属性名形式只有在列名是一个合理的Python变量名时才适用
+    frame2.state
+    frame2['state']
+    
+    # 列可以通过赋值的方式进行修改
+    frame2['debt'] = 17
+    # 将列表或数组赋值给某个列时，其长度必须跟DataFrame的长度相匹配
+    frame2['debt'] = np.arange(6)
+    # 如果赋值的是一个Series，就会精确匹配DataFrame的索引，所有的空位都将被填上缺失值
+    val = pd.Series([-1.2, -1.5, -3.5], index=['two', 'four', 'six'])
+    frame2['debt']=val
+    
+    # 行也可以通过位置或名称的方式进行获取
+    frame2.loc['one']
+    
+    # 为不存在的列赋值会创建出一个新列
+    # 不能用frame2.eastern创建新的列
+    # 添加一个新的布尔值的列，state是否为’Ohio’, 是为True，否填充值False
+    frame2['estern'] = frame2.state == 'Ohio' 
+    
+    # 关键字del用于删除列
+    del frame2['estern']
+    
+    # 嵌套字典传给DataFrame，
+    # pandas就会被解释为：外层字典的键作为列，内层键则作为行索引
+    dic = {'Beijing':{2001: 23, 2002: 35, 2003:56},
+           'Hangzhou':{2002: 2, 2003: 3, 2004: 5}}
+    frame3 = pd.DataFrame(dic)
+    
+    # name 属性
+    # values 属性以二维ndarray的形式返回DataFrame中的数据
+    frame3.index.name = 'year'
+    frame3.columns.name = 'cty'
+    frame2.values
+    ```
 
+- 索引对象
+  - pandas的索引对象负责管理轴标签和其他元数据（比如轴名称等）。
+  - 构建Series或DataFrame时，所用到的任何数组或其他序列的标签都会被转换成一个Index
+  - Index对象是不可变的，因此用户不能对其进行修改
 
 
 
