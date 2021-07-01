@@ -78,7 +78,7 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
     
     # 标量值和数组都可以被赋值给arr3d[0]
     old_value = arr3d[0].copy()
-    arr3d[0] = 34
+    arr3d[0] = 34 # array([[34, 34, 34], [34, 34, 34]])
     arr3d[0]=old_value
     ```
 - 切片索引
