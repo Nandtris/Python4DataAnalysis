@@ -212,6 +212,45 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   rng.randn(5)
   ```
 
+## 5 Pandas 入门
+- 数据清洗和分析工作变得更快更简单的数据结构和操作工具
+- 常结合数值计算工具 NumPy和SciPy，分析库 statsmodels和scikit-learn，和数据可视化库 matplotlib 使用
+- pandas 是专门为处理表格和混杂数据设计的
+- NumPy 更适合处理统一的数值数组数据
+
+### Pandas 数据结构
+- Series
+  - 一组数据（各种NumPy数据类型）以及一组与之相关的数据标签（即索引）组成
+  - `values`和`index`属性获取其数组表示形式和索引对象
+  - `name`属性 `obj4.name = 'population', obj4.index.name = 'states'`
+  
+  - 自定义索引标签 `obj2 = pd.Series([2, 4, -5, 3], index=['b', 'a', 'c', 'd'])`
+  - 就地修改索引 `obj2.index=['Bob', 'Steve', 'Jeff', 'Rayn']`
+  - 取值赋值：以索引的方式选取Series中的单个或一组值 `obj2[['a', 'b', 'c']]= 9 `
+  
+  - 自动对齐：运算中根据索引标签自动对齐数据进行运算 `obj3 + obj2`
+  - 运算：使用NumPy函数或类似NumPy的运算（如根据布尔型数组进行过滤、标量乘法、应用数学函数等）都会保留索引值的链接
+    ```Python
+    obj2[obj2>5]
+    obj2 * 2
+    np.exp(obj2)
+    ```
+  - 可以将Series看成是一个定长的有序字典 `"b" in obj2 # True`
+  - 通过字典来创建Series
+    ```Python
+    # 只传入一个字典，则结果Series中的索引就是原字典的键（有序排列）
+    sdata = {'Ohio': 35000, 'Texas': 71000, "Oregen":16000, 'Otah':5000}
+    obj3 = pd.Series(sdata)
+    
+    # 可以传入排好序的字典的键以改变顺序
+    states = ['California', 'Ohio', 'Oregon', 'Texas']
+    obj4 = pd.Series(sdata, index=states)    
+    ```
+  - `isnull`和`notnull`函数可用于检测缺失数据 `obj4.isnull(), pd.notnull(obj4)`
+
+- DataFrame
+
+
 
 
 ## 10 数据聚合与分组
