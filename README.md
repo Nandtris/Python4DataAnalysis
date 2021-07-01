@@ -146,14 +146,14 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 
 - 将条件逻辑表达为数组运算
   - np.where
-  ```Python
-  # np.where 三元表达式 `x if condition else y`的矢量化版本
-  arr = np.random.rand(4, 4)
-  # 所有正值替换为2，将所有负值替换为－2 
-  np.where(arr > 0, 2, -2) 
-  # 所有正值替换为2， 其余值不变
-  np.where(arr > 0, 2, arr)
-  ```
+    ```Python
+    # np.where 三元表达式 `x if condition else y`的矢量化版本
+    arr = np.random.rand(4, 4)
+    # 所有正值替换为2，将所有负值替换为－2 
+    np.where(arr > 0, 2, -2) 
+    # 所有正值替换为2， 其余值不变
+    np.where(arr > 0, 2, arr)
+    ```
   
 - 数学和统计方法
   - 通过数组上的一组数学函数对整个数组或某个轴向的数据进行统计计算
@@ -166,10 +166,10 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 - 用于布尔型数组的方法
   - 布尔值会被强制转换为1（True）和0（False）
   - sum经常被用来对布尔型数组中的True值计数
-  ```Pyhton
-  arr = np.random.randn(100)
-  np.sum(arr > 0) # number of positive values
-  ```
+    ```Pyhton
+    arr = np.random.randn(100)
+    np.sum(arr > 0) # number of positive values
+    ```
   - `any` 测试数组中是否存在一个或多个True
   - `all` 检查数组中所有值是否都是True
   - 这两个方法也能用于非布尔型数组，所有非0元素将会被当做True
