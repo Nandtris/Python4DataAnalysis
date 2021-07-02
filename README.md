@@ -394,8 +394,57 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   
   data.loc[:'Utah', 'two']
   data.iloc[:, :3][data.three > 5]
-
+  ```
   
+- 整数索引
+  - 如果轴索引含有整数，数据选取总会使用标签。
+  - 为了更准确，请使用loc（标签）或iloc（整数）
+  
+- 算术运算和数据对齐
+  - 对不同索引的对象进行算术运算
+  - 在将对象相加时，如果存在不同的索引对，则结果的索引就是该索引对的并集
+  - 加法相当于SQL中的join， 非共有部分引入缺失值 NaN, 共有部分值加总
+    - 自动的数据对齐操作在不重叠的索引处引入了NA值
+    - 对于DataFrame，对齐操作会同时发生在行和列上
+    - DataFrame对象相加，没有共用的列或行标签，结果都会是空
+  - add, sub, div, floordiv, mul, pow
+  - radd, rsub, rdiv, rfloordiv, rmul, rpow
+  - df1.rdiv(1) = 1/df1
+    ```Python
+    df1 = pd.DataFrame(np.arange(12).reshape((3, 4)),
+                  columns = list('abcd'))
+    df2 = pd.DataFrame(np.arange(20).reshape((4, 5)),
+                      columns = list('abcde'))
+    df2.loc[1, 'b'] = np.nan
+    
+    # 将它们相加时，没有重叠的位置就会产生NA值
+    df1 + df2
+    
+    # 对不同索引的对象进行算术运算时，
+    # 当一个对象中某个轴标签在另一个对象中找不到时填充一个特殊值（比如0）
+    df1.add(df2, fill_value=0)
+    
+    1/df1 = df1.rdiv(1)
+    ```
+- DataFrame和Series之间算术运算
+  - arr2d减去arr2d[0]，每一行都会执行这个操作。这就叫做广播（broadcasting）
+  ```Python
+  frame = pd.DataFrame(np.arange(12.).reshape(4, 3),
+                    columns = list('bde'),
+                    index = ['Utah', 'Ohio', 'Texas', 'Oregen'])
+  series = frame.iloc[0]
+  # 默认情况下，算术运算会将Series的索引匹配到DataFrame的列，然后沿着行一直向下广播
+  frame - series
+
+  # 如果某个索引值在DataFrame的列或Series的索引中找不到，
+  # 则参与运算的两个对象就会被重新索引以形成并集
+  series2 = pd.Series(range(3), index=['b', 'e', 'f'])
+  frame + series2
+
+  # 匹配行且在列上广播，则必须使用算术运算方法
+  series3 = frame['d']
+  frame.sub(series3, axis='index')
+  ```
   
 
 
