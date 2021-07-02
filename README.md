@@ -314,7 +314,92 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 
 ### 5.2 基本功能
 - 操作Series和DataFrame中的数据的基本手段
-- 
+- Reindex
+  - pandas对象的方法，创建一个新对象，它的数据符合新的索引
+  - Series
+    ```Python
+    obj = pd.Series([1, 2, 3], index=['b', 'a', 'c'])
+    # reindex将会根据新索引进行重排。
+    # 如果某个索引值当前不存在，就引入缺失值
+    obj.reindex(['a', 'b', 'c', 'd'])
+    
+    # 像时间序列这样的有序数据
+    # 重新索引时插值处理
+    obj3 = pd.Series(['bluer', 'oranger', 'reder'], index=[0, 2, 5])
+    obj3.reindex(range(6), method='ffill')
+    ```
+  - DataFrame 类似Series
+    ```Python
+    frame = pd.DataFrame(np.arange(9).reshape(3, 3),
+                         index = ['a', 'c', 'b'],
+                         columns = ['Ohio', 'Texas', 'California'])
+    frame2 = frame.reindex(['a', 'b', 'c', 'd'])
+    frame3 = frame.reindex(['a', 'b', 'c', 'd'], 
+                          columns=['Hangzhou', 'Texas', 'California'])
+    ```
+
+- drop
+  - 丢弃某条轴上的一个或多个项，只要有一个索引数组或列表即可
+  - drop方法返回的是一个删除了指定轴值后新对象
+  - 如果就地修改，传入参数 `inplace=True`
+    ```Python
+    # Series
+    obj = pd.Series(np.arange(5.), index=['a', 'b', 'c', 'd', 'e'])
+    new_obj = obj.drop('c')
+    new_obj = obj.drop(['c', 'd'])
+
+    # DataFrame，可以删除任意轴上的索引值
+    data = pd.DataFrame(np.arange(16).reshape(4, 4),
+                       index = ['Ohio', 'Colorado', 'Utah', 'New York'],
+                       columns = ['one', 'two', 'three', 'four'])
+    # 用标签序列调用drop会从行标签（axis 0）删除值
+    data.drop(['Ohio', 'Utah'])
+    # 通过传递axis=1或axis=’columns’可以删除列的值
+    data.drop(['one', 'two'], axis=1)
+    # 就地修改对象，不会返回新的对象
+    data.drop(['one', 'two'], axis=1, inplace=True)
+    ```
+- 索引 选取 过滤
+  ```Python
+  # Series
+  obj = pd.Series(np.arange(4.), index=['a', 'b', 'c', 'd'])
+  obj['b']
+  obj[2:4]
+  obj[['b', 'a', 'd']]
+  obj[[1, 3]]
+  obj[obj < 2]
+  
+  # DataFrame
+  data = pd.DataFrame(np.arange(16).reshape((4, 4)),
+                    index=['Ohio', 'Colorado', 'Utah', 'New York'],
+                    columns=['one', 'two', 'three', 'four'])
+  # 用一个值或序列对DataFrame进行索引其实就是获取一个或多个列
+  向[ ]传递单一的元素或列表，就可选择列
+  data['two']
+  data[['three', 'one']]
+  
+  #切片或布尔型数组选取数据
+  data[:2] # 前两行
+  data[data['three'] > 5]
+  
+  data < 5
+  data[data < 5] = 0
+  ```
+- 轴标签（loc）或整数索引（iloc）
+  
+  ```Python
+  data.loc['Colorado', ['two', 'three']]
+  data.iloc[2, [3, 0, 1]]
+  data.iloc[[1, 2], [3, 0, 1]]
+  
+  data.loc[:'Utah', 'two']
+  data.iloc[:, :3][data.three > 5]
+
+  
+  
+
+
+
 
 ## 10 数据聚合与分组
 
