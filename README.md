@@ -445,8 +445,61 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   series3 = frame['d']
   frame.sub(series3, axis='index')
   ```
+### 5.3 汇总和计算描述统计
+- 从Series中提取单个值（如sum或mean）
+- 从DataFrame的行或列中提取一个Series。
+- 跟对应的NumPy数组方法相比，它们都是基于没有缺失数据的假设而构建的
+- count describe min max argmin argmax idxmin idxmax quantile
+- sum mean median mad std var skew kurt 
+- cumsum cumprod cummin cummax diff pct_cahnge
+  ```Python
+  df = pd.DataFrame([[1.4, np.nan], [7.1, -4.5], [np.nan, np.nan], [.75, -1.3]],
+            columns = ['one', 'two'],
+            index = ['a', 'b', 'c', 'd'])
+            
+  # 调用DataFrame的sum方法将会返回一个含有列的和的Serie
+  df.sum()
   
+  # 传入axis=’columns’或axis=1将会按行进行求和运算
+  df.sum(axis=1)
+  
+  # NA值会自动被排除,skipna选项可以禁用该功能
+  df.mean(axis='columns', skipna=Fasle)
+  
+  # 一次性产生多个汇总统计
+  df.describe()
+  
+  df:
+    one 	two
+  a 	1.40 	NaN
+  b 	7.10 	-4.5
+  c 	NaN 	NaN
+  d 	0.75 	-1.3
+  
+  # 计算百分数变化
+  df.pct_change() # (7.1-1.4)/1.4 = 4.071429
+      one 	two
+  a 	NaN 	NaN
+  b 	4.071429 	NaN
+  c 	0.000000 	0.000000
+  d 	-0.894366 	-0.711111
+  ```
+  
+- 相关系数与协方差 ???
 
+- 唯一值、值计数以及成员资格
+  - 从一维Series的值中抽取信息
+    ```Python
+    obj = pd.Series(['c', 'a', 'd', 'a', 'a', 'b', 'b', 'c', 'c'])
+    
+    obj.unique()
+    obj.value_counts()
+    pd.value_counts(obj.values, sort=False)
+    
+    # isin用于判断矢量化集合的成员资格
+    mask = obj.isin(['b', 'c'])
+    obj[mask]
+    ```
 
 
 
