@@ -4,7 +4,7 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 ## 4 Numpy 基础
 ### 4.1 numpy: ndarray 
 - import numpy as np
-- NumPy N维数组对象（即ndarray, 是一个快速而灵活的大数据集容器。
+- NumPy N维数组对象`ndarray`, 是一个快速而灵活的大数据集容器。
 - 你可以利用这种数组对整块数据执行一些数学运算，其语法跟标量元素之间的运算一样。
 - ndarray 其中的所有元素必须是相同类型的。
 - 每个数组都有一个shape（一个表示各维度大小的元组）和一个dtype（一个用于说明数组数据类型的对象）
