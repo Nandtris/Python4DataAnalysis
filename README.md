@@ -943,3 +943,17 @@ tips.pivot_table('tip_pct', index=['time', 'size', 'smoker'],
   
 
 - 为建模创建虚拟变量
+
+### 12.2 GroupBy高级应用 ???
+- 12.1 分组转换和“解封”GroupBy
+- 12.2 分组的时间重采样
+- 12.3 链式编程技术
+   ```Python
+   result = (load_data()
+            [lambda x: x.col2 < 0]
+            .assign(col1_demeaned=lambda x: x.col1 - x.col1.mean())
+            .groupby('key')
+            .col1_demeaned.std())
+   ```
+   
+
