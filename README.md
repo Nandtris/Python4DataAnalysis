@@ -849,5 +849,57 @@ tips.pivot_table('tip_pct', index=['time', 'size', 'smoker'],
   ```
 
 ## 12 Advanced pandas
-### 1 Categorical Type in pandas
-- 
+### 12.1 分类数据
+- pandas的分类类型，可提高性能和内存的使用率
+- 统计和机器学习中使用分类数据的工具
+-
+- 用整数表示的方法称为分类或字典编码表示法
+- 不同值得数组称为分类、字典或数据级
+- 表示分类的整数值称为分类编码或简单地称为编码
+  ```Python
+  values = pd.Series(['0', '1', '0', '0']*2)
+  dim = pd.Series(['apple', 'orange'])
+  
+  pd.unique(values)
+  pd.value_counts(values)
+  
+  # take方法存储原始的字符串Series
+  dim.take(values)
+  ```
+ - Categorical Type in pandas
+  - `Categories` 分类类型，用于保存使用整数分类表示法的数据
+    ```Python
+    fruits = ['apple', 'orange', 'apple', 'apple']*2
+    N = len(fruits)
+    df = pd.DataFrame({'fruit': fruits,
+                      'basket_id': np.arange(N),
+                      'count': np.random.randint(3, 15, size=N),
+                      'weight': np.random.uniform(0, 4, size=N)},
+                      columns = ['basket_id', 'fruit', 'count', 'weight'])
+    # 转变为分类对象
+    # fruit_cat的值不是NumPy数组，而是一个pandas.Categorical实例
+    fruit_cat = df['fruit'].astype('category')
+
+    c = fruit_cat.values
+    type(c) # pandas.core.arrays.categorical.Categorical
+
+    # 分类对象有categories和codes属性
+    c.categories # Index(['apple', 'orange'], dtype='object')
+    c.codes # array([0, 1, 0, 0, 0, 1, 0, 0], dtype=int8)
+
+    # 从其它Python序列直接创建pandas.Categorical
+    pd.Categorical(['foo', 'bar', 'baz','foo', 'bar'])
+
+    # 使用from_codes构造器
+    categories = ['bar', 'foo', 'baz']
+    codes = [0, 1, 2, 0, 0, 1]
+    my_cats_2 = pd.Categorical.from_codes(codes, categories)
+
+    # 分类变换不认定指定的分类顺序
+    # 使用from_codes或其它的构造器时，可以指定分类一个有意义的顺序
+    ordered_cat = pd.Categorical.from_codes(codes, categories, ordered=True)
+
+    无序的分类实例可以通过as_ordered排序
+    my_cats_2.as_ordered() # result = ordered_cat
+    ```
+- 用分类进行计算
