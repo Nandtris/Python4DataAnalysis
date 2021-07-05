@@ -903,3 +903,43 @@ tips.pivot_table('tip_pct', index=['time', 'size', 'smoker'],
     my_cats_2.as_ordered() # result = ordered_cat
     ```
 - 用分类进行计算
+  ```Python
+  np.random.seed(12345)
+  draws = np.random.randn(1000)
+  # 等长 cut
+  bins = pd.cut(draws, 4, labels=['Q1', 'Q2', 'Q3', 'Q4'])
+  bins.codes[:10]
+  bins = pd.Series(bins, name='quantile')
+  result = pd.DataFrame(pd.Series(draws)
+                       .groupby(bins)
+                       .agg(['count', 'mean', 'max', 'min'])
+                       .reset_index())
+  result['quantile']
+  ```
+  
+- 用分类提高性能
+- 分类方法
+  ```Python
+  s = pd.Series(['a', 'b', 'c', 'd'] * 2)
+  cat_s = s.astype('category')
+  # cat属性提供了分类方法的入口
+  cat_s.cat.codes
+  cat_s.cat.categories # Index(['a', 'b', 'c', 'd'], dtype='object')
+
+  # 假设这个数据的实际分类集，超出了数据中的四个值
+  # 我们可以使用set_categories方法改变它们
+  actual_category = ['a', 'b', 'c', 'd', 'e']
+  cat_s2 = cat_s.cat.set_categories(actual_category)
+
+  cat_s.value_counts()
+  cat_s.value_counts()
+
+  # 在大数据集中，分类经常作为节省内存和高性能的便捷工具
+  # 过滤完大DataFrame或Series之后，许多分类可能不会出现在数据中。
+  # 用remove_unused_categories方法删除没看到的分类
+  cat_s3 = cat_s[cat_s.isin(['a', 'b'])]
+  cat_s3.cat.remove_unused_categories()
+  ```
+  
+
+- 为建模创建虚拟变量
