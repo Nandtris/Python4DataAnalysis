@@ -956,4 +956,85 @@ tips.pivot_table('tip_pct', index=['time', 'size', 'smoker'],
             .col1_demeaned.std())
    ```
    
+ ## 14 case study
+ ### 14.1 Bitly的USA.gov数据
+ ```Python
+ path = 'datasets/bitly_usagov/example.txt'
+records = [json.loads(line) for line in open(path)]
+# records[:2]
+# 并不是所有记录都有时区字段
+time_zones  = [rec['tz'] for rec in records if 'tz' in rec]
+# time_zones[:11]
 
+# 该数据集中最常出现的是哪个时区（即tz字段）
+# 1 对时区进行计数:只使用标准Python库
+def get_counts(sequence):
+    counts = {}
+    for x in sequence:
+        if x in counts:
+            counts[x] += 1
+        else:
+            counts[x] = 1
+    return counts
+counts = get_counts(time_zones)
+# counts['America/New_York']
+# 得到前10位的时区及其计数值
+def top_counts(count_dict, n=10):
+    value_key_pairs = [(count, tz) for tz, count in count_dict.items()]
+    value_key_pairs.sort() # sort()原地排序， 不返回值
+    return value_key_pairs[-n:]    
+top_counts(counts)    
+
+# 2 对时区进行计数:用pandas对时区进行计数
+frame = pd.DataFrame(records)
+# frame.info() # 摘要视图（summary view）
+# frame.tz[:10]
+tz_counts = frame['tz'].value_counts()
+tz_counts
+
+
+# 可视化这个数据
+# fillna替换缺失值 NA，
+# 而未知值（空字符串）则可以通过布尔型数组索引加以替换
+clean_tz = frame['tz'].fillna('Missing')
+clean_tz[clean_tz == ""] = "Unkonwn"
+tz_counts = clean_tz.value_counts()
+tz_counts["Missing"] # 120
+
+import seaborn as sns
+subset = tz_counts[:10]
+sns.barplot(y=subset.index, x=subset.values)
+
+
+# frame a~agent 字段含有执行URL短缩操作的浏览器、设备、应用程序的相关信息 
+# 解析 agent
+# 将这种字符串的第一节（与浏览器大致对应）分离出来
+# 并得到另外一份用户行为摘要
+results  = pd.Series([x.split()[0] for x in frame.a.dropna()])
+results.value_counts()[:10]
+
+# 按Windows和非Windows用户对时区统计信息进行分解
+# 只要agent字符串中含有”Windows”就认为该用户为Windows用户
+# 有的agent缺失，所以首先将它们从数据中移除
+cframe = frame[frame.a.notnull()]
+# 计算出各行是否含有Windows的值
+cframe['os'] = np.where(cframe['a'].str.contains('Windows'),
+                          'Windows', 'Not Windows')
+# cframe['os'][:5]
+by_tz_os = cframe.groupby(['tz', 'os'])
+agg_counts = by_tz_os.size().unstack().fillna(0)
+# 选取最常出现的时区
+# 根据agg_counts中的行数构造了一个间接索引数组
+# Use to sort in ascending order
+# 按小到大顺序排列`agg_counts.sum(1)`，然后取其索引
+indexer = agg_counts.sum(1).argsort()
+# 截取最后10行最大值
+count_subset = agg_counts.take(indexer[-10:])
+count_subset
+
+# 传递一个额外参数到seaborn的barpolt函数，来画一个堆积条形图 ???
+count_subset = count_subset.stack()
+count_subset.name ='total'
+count_subset = count_subset.reset_index()
+sns.barplot(x='total', y='tz', hue='os',  data=count_subset)
+```
