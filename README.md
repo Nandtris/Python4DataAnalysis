@@ -1008,8 +1008,9 @@ tips.pivot_table('tip_pct', index=['time', 'size', 'smoker'],
   tz_counts["Missing"] # 120
 
   import seaborn as sns
-  subset = tz_counts[:10]
-  sns.barplot(y=subset.index, x=subset.values)
+  # subset = tz_counts[:10]
+  # sns.barplot(y=subset.index, x=subset.values)
+
 
 
   # frame a~agent 字段含有执行URL短缩操作的浏览器、设备、应用程序的相关信息 
@@ -1018,6 +1019,7 @@ tips.pivot_table('tip_pct', index=['time', 'size', 'smoker'],
   # 并得到另外一份用户行为摘要
   results  = pd.Series([x.split()[0] for x in frame.a.dropna()])
   results.value_counts()[:10]
+
 
   # 按Windows和非Windows用户对时区统计信息进行分解
   # 只要agent字符串中含有”Windows”就认为该用户为Windows用户
@@ -1028,19 +1030,29 @@ tips.pivot_table('tip_pct', index=['time', 'size', 'smoker'],
                             'Windows', 'Not Windows')
   # cframe['os'][:5]
   by_tz_os = cframe.groupby(['tz', 'os'])
+  # https://blog.csdn.net/MissingDi/article/details/106982381
+  # groupby.size()/count() 区别：size计数分类项本身
   agg_counts = by_tz_os.size().unstack().fillna(0)
   # 选取最常出现的时区
   # 根据agg_counts中的行数构造了一个间接索引数组
   # Use to sort in ascending order
   # 按小到大顺序排列`agg_counts.sum(1)`，然后取其索引
   indexer = agg_counts.sum(1).argsort()
-  # 截取最后10行最大值
+  # 截取最后10行最大值: 按时区、浏览器分类计数
   count_subset = agg_counts.take(indexer[-10:])
-  count_subset
 
-  # 传递一个额外参数到seaborn的barpolt函数，来画一个堆积条形图 ???
+  # 传递一个额外参数到seaborn的barpolt函数，来画一个堆积条形图
   count_subset = count_subset.stack()
   count_subset.name ='total'
   count_subset = count_subset.reset_index()
-  sns.barplot(x='total', y='tz', hue='os',  data=count_subset)
+  # sns.barplot(x='total', y='tz', hue='os',  data=count_subset)
+
+  # 上面图不容易看出Windows用户在小分组中的相对比例，
+  # 因此标准化分组百分比之和为1
+  # 以 'tz' 分组，每个组内 Win + NotWin = 1
+  def norm_total(group):
+      group['normed_total'] = group.total / group.total.sum()
+      return group
+  results = count_subset.groupby('tz').apply(norm_total)
+  sns.barplot(x='normed_total', y='tz', hue='os',  data=results)
   ```
