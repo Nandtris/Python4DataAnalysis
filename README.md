@@ -1056,3 +1056,56 @@ tips.pivot_table('tip_pct', index=['time', 'size', 'smoker'],
   results = count_subset.groupby('tz').apply(norm_total)
   sns.barplot(x='normed_total', y='tz', hue='os',  data=results)
   ```
+  
+### 12.2 MovieLens 1M dataset
+GroupLens Research（http://www.grouplens.org/node/73 ）<br>
+- 含有来自6000名用户对4000部电影的100万条评分数据
+- 根据性别和年龄计算某部电影的平均得分
+- 了解女性观众最喜欢的电影
+- 找出分歧最大的电影（不考虑性别因素），std
+  ```Python
+  import pandas as pd
+  pd.options.display.max_rows = 12
+
+  unames = ['user_id', 'gender', 'age', 'occupation', 'zip']
+  users = pd.read_table('datasets/movielens/users.dat', sep = '::',
+                        header = None, names = unames)
+  rnames = ['user_id', 'movie_id', 'rating', 'timestamp']
+  ratings = pd.read_table('datasets/movielens/ratings.dat', sep = '::',
+                          header = None, names = rnames)
+  mnames = ['movie_id', 'title', 'genres']
+  movies = pd.read_table('datasets/movielens/movies.dat', sep = '::', 
+                         header = None, names = mnames)
+
+  # 根据性别和年龄计算某部电影的平均得分
+  data = pd.merge(pd.merge(ratings, users), movies)
+  # 按性别计算每部电影的平均得分，可以使用pivot_table方法
+  mean_ratings = data.pivot_table('rating', index = 'title', 
+                                  columns = 'gender', aggfunc = 'mean')
+  # mean_ratings[:5]
+
+  # 过滤掉评分数据不够250条的电影
+  # groupby().size()得到一个含有各电影分组大小的Series对象
+  ratings_by_title = data.groupby('title').size()
+  active_titles = ratings_by_title.index[ratings_by_title > 250]
+  mean_ratings = mean_ratings.loc[active_titles]
+
+  # 了解女性观众最喜欢的电影，我们可以对F列降序排列
+  top_female_ratings = mean_ratings.sort_values(by = 'F', ascending = False)
+  # top_female_ratings[:10]
+
+  # 男性和女性观众分歧最大的电影
+  # 给mean_ratings加上一个用于存放平均得分之差的列
+  mean_ratings['diff'] = mean_ratings.M - mean_ratings.F
+  # 按”diff”排序即可得到分歧最大且女性观众更喜欢的电影
+  sort_by_diff = mean_ratings.sort_values('diff')
+  # 对排序结果反序并取出前10行，得到的则是男性观众更喜欢的电影
+  sort_by_diff[::-1][:10]
+
+  # 只是想要找出分歧最大的电影（不考虑性别因素），
+  # 则可以计算得分数据的方差或标准差
+  rating_std_by_title = data.groupby('title')['rating'].std()
+  rating_std_by_title = rating_std_by_title.loc[active_titles]
+  rating_std_by_title.sort_values( ascending = False)[:10]
+  ```
+### 12.3 
