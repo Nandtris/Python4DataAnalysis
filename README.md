@@ -1113,3 +1113,23 @@ GroupLens Research（http://www.grouplens.org/node/73 ）<br>
   rating_std_by_title.sort_values( ascending = False)[:10]
   ```
 ### 12.3 
+- None
+- None
+
+  ```Python
+  years = range(1880, 2011)
+  pieces = []
+  columns = ['name', 'sex', 'births']
+
+  for year in years:
+      path = 'datasets/babynames/yob%d.txt'% year
+      frame = pd.read_csv(path, names = columns)
+
+      frame['year'] = year
+      pieces.append(frame)
+
+  # Concatenate everything into a single DataFrame
+  # concat默认是按行将多个DataFrame组合到一起的
+  # 指定ignore_index=True，我们不希望保留read_csv所返回的原始行号
+  names = pd.concat(pieces, ignore_index = True)
+  ```
