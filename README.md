@@ -958,6 +958,10 @@ tips.pivot_table('tip_pct', index=['time', 'size', 'smoker'],
    
 ## 14 case study
 ### 14.1 Bitly的USA.gov数据
+- 该数据集中最常出现的是哪个时区
+- 按Windows和非Windows用户对时区统计信息进行分解
+- seaborn 可视化
+
   ```Python
   import numpy as np
   import pandas as pd
