@@ -1112,11 +1112,20 @@ GroupLens Research（http://www.grouplens.org/node/73 ）<br>
   rating_std_by_title = rating_std_by_title.loc[active_titles]
   rating_std_by_title.sort_values( ascending = False)[:10]
   ```
-### 12.3 
-- None
-- None
+
+
+### 12.3 1880-2010年间全美婴儿姓名
+- 分析top1000数据集
+- 命名趋势
+- 评估命名多样性的增长
+- 名字“最后一个字母”的变革
+- 计算出各性别各末字母占总出生人数的比例
+- 变成女孩名字的男孩名字（以及相反的情况）???
 
   ```Python
+  import pandas as pd
+  import numpy as np
+
   years = range(1880, 2011)
   pieces = []
   columns = ['name', 'sex', 'births']
@@ -1132,4 +1141,94 @@ GroupLens Research（http://www.grouplens.org/node/73 ）<br>
   # concat默认是按行将多个DataFrame组合到一起的
   # 指定ignore_index=True，我们不希望保留read_csv所返回的原始行号
   names = pd.concat(pieces, ignore_index = True)
+
+  total_births = names.pivot_table('births', index = 'year',
+                                   columns = 'sex', aggfunc = sum)
+  # 按性别分组 绘制年总出生人数曲线
+  total_births.plot(title = 'Total births by sex and year')
+
+  # 插入一个prop列，用于存放指定名字的婴儿数相对于总出生数的比例
+  def add_prop(group):
+      group['prop'] = group.births/group.births.sum()
+      return group
+  names = names.groupby(['year', 'sex']).apply(add_prop)
+
+  # 分组处理时，一般都应做有效性检查，
+  # 比如验证所有分组的prop的总和是否为1
+  # names.groupby(['year', 'sex']).sum()
+
+
+  # 数据分析top1000数据集
+  # 便于进一步的分析，我需要取出该数据的一个子集：
+  # 每对sex/year组合的前1000个名字
+  def get_top1000(group):
+      return group.sort_values('births', ascending=False)[:1000]
+  top1000 = names.groupby(['year', 'sex']).apply(get_top1000)
+  # Drop the group index, not needed
+  top1000.reset_index(inplace=True, drop=True)
+
+  # 1 分析命名趋势
+  boys = top1000[top1000.sex == 'M']
+  girls = top1000[top1000.sex == 'F']
+
+  total_births = top1000.pivot_table('births', index='year',
+                                    columns='name', aggfunc=sum)
+  # total_births.info()
+  subset = total_births[['John', 'Harry', 'Mary', 'Marilyn']]
+  subset.plot(subplots=True, figsize=(12, 10), grid=False, 
+             title='number of births per year')
+
+
+  # 评估命名多样性的增长
+  # 父母愿意给小孩起常见的名字越来越少
+
+  # way1:计算最流行的1000个名字所占的比例
+  table = top1000.pivot_table('prop', index= 'year', 
+                             columns='sex', aggfunc=sum)
+  # linspace 在指定的间隔内返回均匀间隔的数字
+  # 名字的多样性确实出现了增长（前1000项的比例降低）
+  table.plot(title='Sum of table1000.prop by year and sex', 
+            yticks=np.linspace(0, 1.2, 13), 
+            xticks=range(1880, 2020, 10), figsize=(9, 5))
+
+  # way2:计算占总出生人数前50%的不同名字的数量
+  # searchsorted 在数组a中插入数组v（并不执行插入操作），返回一个下标列表，这个列表指明了v中对应元素应该插入在a中那个位置上
+  def get_quantile_count(group, q=0.5):
+      group = group.sort_values(by='prop', ascending=False)
+      return group.prop.cumsum().values.searchsorted(q) + 1
+  diversity = top1000.groupby(['year', 'sex']).apply(get_quantile_count)
+  diversity = diversity.unstack('sex')
+  # 可以看出，女孩名字的多样性总是比男孩的高，而且还在变得越来越高
+  diversity.plot(title = 'Number of popular name s in top 50%', figsize=(9, 5)) 
+
+  # 名字“最后一个字母”的变革
+  # extract last letter from name column
+  get_last_letter = lambda x: x[-1]
+  last_letters = names.name.map(get_last_letter)
+  last_letters.name = 'last_letter'
+  table = names.pivot_table('births', index=last_letters,
+                          columns=['sex', 'year'], aggfunc=sum)
+  subtable = table.reindex(columns=[1910, 1960, 2010], level='year')
+
+  # 计算出各性别各末字母占总出生人数的比例
+  letter_prop = subtable/subtable.sum()
+  import matplotlib.pyplot as plt
+  fig, axes = plt.subplots(2, 1, figsize=(10, 8))
+  letter_prop['M'].plot(kind='bar', rot=0, ax=axes[0], title='Male')
+  letter_prop['F'].plot(kind='bar', rot=0, ax=axes[1], title='Female')
+
+  letter_prop  = table/table.sum()
+  dny_ts = letter_prop.loc[['d', 'n', 'y'], 'M'].T
+  dny_ts.plot()
+
+  # 变成女孩名字的男孩名字（以及相反的情况）???
+  all_names = pd.Series(top1000.name.unique())
+  lesley_like = all_names[all_names.str.lower().str.contains('lesl')]
+  # lesley_like
+  filtered  = top1000[top1000.name.isin(lesley_like)]
+  filtered.groupby('name').births.sum()
+  table = filtered.pivot_table('births', index='year',
+                              columns='sex', aggfunc='sum')
+  table = table.div(table.sum(1),axis=0)
+  table.plot(style={'M':'k-', 'F':'k--'})
   ```
