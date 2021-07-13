@@ -1232,3 +1232,114 @@ GroupLens Research（http://www.grouplens.org/node/73 ）<br>
   table = table.div(table.sum(1),axis=0)
   table.plot(style={'M':'k-', 'F':'k--'})
   ```
+
+### 12.5 2012联邦选举委员会数据库
+- 对党派和职业对数据进行聚合，然后过滤掉总出资额不足200万美元的数据
+- 清理规整类似职业\雇主信息
+- 子集 针对主要的两名候选人:Barack Obama和Mitt Romney
+  ```Python
+  import pandas as pd
+  
+  # fec2 = pd.read_csv('datasets/fec/P00000001-ALL.csv') 
+  # py:3145: DtypeWarning: Columns (6) have mixed types.Specify dtype option on import or set low_memory=False.
+  # 列6的数据类型不一样。解决方法
+  # 1.设置read_csv的dtype参数，指定字段的数据类型
+  # 2.设置read_csv的low_memory参数为False
+
+  # pandas读取csv文件默认是按块读取的，即不一次性全部读取；
+  # pandas对数据的类型是完全靠猜的，
+  # pandas每读取一块数据就对csv字段的数据类型进行猜一次，
+  # 有可能pandas在读取不同块时对同一字段的数据类型猜测结果不一致。
+
+  # low_memory=False 参数设置后，pandas会一次性读取csv中的所有数据，
+  # 然后对字段的数据类型进行唯一的一次猜测。
+  # 这样就不会导致同一字段的Mixed types问题了。
+  # 但是这种方式，一旦csv文件过大，就会内存溢出；
+  # 所以推荐用第1中解决方案。
+  
+  # 法1
+  fec = pd.read_csv('datasets/fec/P00000001-ALL.csv', dtype={"contbr_zip": object})
+  # 法2
+  fec = pd.read_csv('datasets/fec/P00000001-ALL.csv', low_memory=False)
+  
+  fec.info()
+  
+  
+  # 加入党派信息
+  # 取全部的候选人名单
+  unique_cands = fec.cand_nm.unique()
+  # 指明党派信息的方法之一是使用字典
+  parties = {'Bachmann, Michelle': 'Republican',
+              'Cain, Herman': 'Republican',
+              'Gingrich, Newt': 'Republican',
+              'Huntsman, Jon': 'Republican',
+              'Johnson, Gary Earl': 'Republican',
+              'McCotter, Thaddeus G': 'Republican',
+              'Obama, Barack': 'Democrat',
+              'Paul, Ron': 'Republican',
+              'Pawlenty, Timothy': 'Republican',
+              'Perry, Rick': 'Republican',
+              "Roemer, Charles E. 'Buddy' III": 'Republican',
+              'Romney, Mitt': 'Republican',
+              'Santorum, Rick': 'Republican'}
+  fec['party'] = fec.cand_nm.map(parties)
+  fec['party'].value_counts()
+
+  # 该数据既包括赞助也包括退款（负的出资额）
+  # 限定该数据集只能有正的出资额
+  (fec.contb_receipt_amt > 0).value_counts()
+  fec = fec[fec.contb_receipt_amt > 0]
+
+  # 子集 针对主要的两名候选人:Barack Obama和Mitt Romney
+  fec_mrbo = fec[fec.cand_nm.isin(['Obama, Barack', 'Romney, Mitt'])]
+
+  fec.contbr_occupation.value_counts()[:15]
+
+  # 清理规整类似职业信息
+  occ_mapping = {
+      'INFORMATION REQUESTED PER BEST EFFORTS': 'NOT PROVIDED', 
+      'INFORMATION REQUESTED': 'NOT PROVIDED', 
+      'INFORMATION REQUESTED (BEST EFFORTS)': 'NOT PROVIDED', 
+      'C.E.O.': 'CEO'}
+  # if no mapping provided, returned x
+  f = lambda x: occ_mapping.get(x, x)
+  fec.contbr_occupation = fec.contbr_occupation.map(f)
+
+  # 整理雇主信息
+  emp_mapping = {
+     'INFORMATION REQUESTED PER BEST EFFORTS' : 'NOT PROVIDED',
+     'INFORMATION REQUESTED' : 'NOT PROVIDED',
+     'SELF' : 'SELF-EMPLOYED',
+     'SELF EMPLOYED' : 'SELF-EMPLOYED',}
+  f = lambda x: emp_mapping.get(x, x)
+  fec.contbr_employer = fec.contbr_employer.map(f)
+
+  # 对党派和职业对数据进行聚合，然后过滤掉总出资额不足200万美元的数据
+  by_occupation = fec.pivot_table('contb_receipt_amt', 
+                                  index='contbr_occupation',
+                                  columns='party', aggfunc=sum)
+  over_2mm = by_occupation[by_occupation.sum(1) > 2000000]
+  over_2mm.plot(kind='barh')
+  
+  
+  # 了解对Obama和Romney总出资额最高的职业和企业
+  def get_top_amounts(group, key, n=5):
+      totals = group.groupby(key)['contb_receipt_amt'].sum()
+      return totals.nlargest(n)
+
+  grouped = fec_mrbo.groupby('cand_nm')
+  grouped.apply(get_top_amounts, 'contbr_occupation', n=7)
+
+  grouped.apply(get_top_amounts, 'contbr_employer', n=10)
+  
+  # 对出资额按候选人和州分组统计
+  grouped = fec_mrbo.groupby(['cand_nm', 'contbr_st'])
+  totals = grouped.contb_receipt_amt.sum().unstack(0).fillna(0)
+  percent = totals.div(totals.sum(1), axis=0)
+  ```
+  
+
+  
+
+
+  
