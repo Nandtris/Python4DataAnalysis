@@ -1233,6 +1233,72 @@ GroupLens Research（http://www.grouplens.org/node/73 ）<br>
   table.plot(style={'M':'k-', 'F':'k--'})
   ```
 
+### 12.4 USDA食品数据库
+- 规整视频数据库，由列表（字典组成）整理成info-nutrients的合并表
+- 根据食物分类和营养类型画出一张中位值图
+- 发现各营养成分最为丰富的食物
+  
+  ```Python
+  
+  import json
+  import pandas as pd
+  db = json.load(open('datasets/usda_food/database.json'))
+  len(db) # 6636  type(db) = list
+  
+  db[1].keys()
+  # dict_keys(['id', 'description', 'tags', 
+  #     'manufacturer', 'group', 'portions', 'nutrients'])
+  
+  # 合并各条目下的 nutrients 为一个总表
+  # 并添加共享健 'id'
+  piceses = []
+  for i in range(len(db)):
+      nutrient = pd.DataFrame(db[i]['nutrients'])
+      nutrient['id'] = db[i]['id']
+      piceses.append(nutrient)
+
+  nutrients = pd.concat(piceses, ignore_index=True)
+  # 检查重复项
+  nutrients.duplicated().sum() 
+  nutrients = nutrients.drop_duplicates()
+  
+  # 
+  info_keys = ['description', 'group', 'id', 'manufacturer']
+  info = pd.DataFrame(db, columns=info_keys)
+  pd.value_counts(info.group)
+  
+  # info/nutrients 列 'description' 'group' 重复
+  col_mapping = {'description': 'food', 'group': 'fgroup'}
+  info = info.rename(columns=col_mapping, copy=False)
+  col_mapping = {'description': 'nutrient', 'group': 'nutgroup'}
+  nutrients = nutrients.rename(columns=col_mapping, copy=False)
+  
+  info.info()
+  nutrients.info()
+  
+  # 合并 info nutrients
+  ndata = pd.merge(nutrients, info, on='id', how='outer')
+  ndata.info()
+  
+  # 根据食物分类和营养类型画出一张中位值图
+  result = ndata.groupby(['nutrient', 'fgroup'])['value'].quantile(0.5)
+  result['Zinc, Zn'].sort_values().plot(kind='barh')
+  
+  
+  # 发现各营养成分最为丰富的食物
+  by_nutrient = ndata.groupby(['nutgroup', 'nutrient'])
+  get_maximum = lambda x: x.loc[x.value.idxmax()]
+  max_foods = by_nutrient.apply(get_maximum)[['value', 'food']]
+  max_foods.food = max_foods.food.str[:50]
+  max_foods
+  
+  max_foods.food
+  
+  max_foods.loc['Amino Acids']['food']
+  ```
+  
+  
+
 ### 12.5 2012联邦选举委员会数据库
 - 对党派和职业对数据进行聚合，然后过滤掉总出资额不足200万美元的数据
 - 清理规整类似职业\雇主信息
