@@ -46,7 +46,7 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   - 大小相等的数组之间的任何算术运算都会将运算应用到元素级别
   - 大小相同的数组之间的比较会生成布尔值数组
   - 数组与标量的算术运算会将标量值传播到各个元素
-  - 不同大小的数组之间的运算叫做广播（broadcasting）
+  - 不同大小的数组之p间的运算叫做广播（broadcasting）
   
 - Index and Slice
   - 一维数组
@@ -603,10 +603,53 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
     ```
     
 - 处理分隔符格式
-- JSON数据
-- XML和HTML：Web信息收集
-- 利用lxml.objectify解析
+  ```Python
+  import csv
 
+  # 处理分隔符格式
+  !type examples\ex7.csv
+  # "a","b","c"
+  # "1","2","3"
+  # "1","2","3"
+
+  with open('examples/ex7.csv') as f:
+      lines = list(csv.reader(f))
+  header, values = lines[0], lines[1:]
+  data_dict = {h: v for h, v in zip(header, zip(*values))}
+  
+  data_dict  # {'a': ('1', '1'), 'b': ('2', '2'), 'c': ('3', '3')}
+  ```
+  
+- JSON数据
+  - JSON（JavaScript Object Notation）
+  - 基本类型有对象（字典）、数组（列表）、字符串、数值、布尔值以及null
+  - 空值null，列表末尾不允许存在多余的逗号
+  - 比表格型文本格式（csv）灵活
+    ```Python
+    import json
+    import pandas ad pd
+    
+    result = json.loads(obj)
+    asjson = json.dumps(result)
+    
+    # json to DataFrame
+    df = pd.DataFrame(result['xx'], columns=['age', 'name'])
+    
+    # 特殊格式 pd.read_json(), pd.to_json()
+    ```
+
+- XML和HTML：Web信息收集
+  - read_html，
+  - 使用lxml和Beautiful Soup自动将HTML文件中的表格解析为DataFrame对象
+    ```Python
+    conda install lxml
+    pip install beautifulsoup4 html5lib
+    
+    table = pd.read_html('examples/fdic_failed_bank_list.html')
+    failures = table[0]
+    ```
+
+- 利用lxml.objectify解析
 
   
   
