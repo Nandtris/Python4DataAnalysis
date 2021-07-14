@@ -501,6 +501,116 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
     obj[mask]
     ```
 
+## 6 数据加载、储存与文件格式
+### 6.1 读取文本格式的数据
+- 表格型数据--->DataFrame
+  - pd.read_csv()
+    - 有超过50个参数
+    - 有类型推断功能
+  - pd.read_table()
+  - pd.read_json()
+  - pd.read_fwf()
+  - pd.read_clipboard()
+  - pd.read_excel()
+  - pd.read_hdf()
+  - pd.read_html()
+  - pd.read_msgpack()
+  - pd.read_pickle()
+  - pd.read_sas()
+  - pd.read_sql()
+  - pd.read_stata()
+  - pd.read_feather()
+
+- read_csv()
+
+  ```Python
+  refer to: https://www.bookstack.cn/read/pyda-2e-zh/6.1.md
+  
+  # 原始内容输出到屏幕上
+  !type examples/ex5.csv # Windows
+  !cat examples/ex5.csv # linux
+  
+  # 没有标题行的 csv
+  # 1 pandas为其分配默认的列名
+  # 2 自己定义列名
+  pd.read_csv('examples/ex2.csv', header=None)
+  
+  names = ['a', 'b', 'c', 'd', 'message']
+  pd.read_csv('example/ex2.csv', names=names)
+  
+  # 将message列做成DataFrame的索引
+  pd.read_csv('example/ex2.csv', names=names, index_col='message')
+  
+  # 将多个列做成一个层次化索引，只需传入由列编号或列名组成的列表即可
+  pd.read_csv('example/ex2.csv', index_col=[0, 1]) # 列索引从0开始
+  pd.read_csv('example/ex2.csv', index_col=['key1', 'key2'])
+  
+  # 跳过第一行 第三行 第四行
+  pd.read_csv('examples/ex4.csv', skiprows=[0, 2, 3])
+  
+  # 正则表达式表达为\s+
+  # 处理不规则空白分隔符
+  pd.read_table('examples/ex3.txt', sep='\s+')
+  
+  # 缺失值处理
+  # na_values可以用一个列表或集合的字符串表示缺失值
+  !cat examples/ex5.csv
+  result = pd.read_csv('examples/ex5.csv')
+  result = pd.read_csv('examples/ex5.csv'， na_values=['Null'])
+  # 字典可以使不同的列标记缺失值
+  sentinels = {'message': ['foo', 'NA'], 'something': ['two']}
+  pd.read_csv('examples/ex5.csv', na_values=sentinels)
+  ```
+  
+- 逐块读取文本文件
+  - 在处理很大的文件时，
+  - 或找出大文件中的参数集以便于后续处理时，
+  - 你可能只想读取文件的一小部分或逐块对文件进行迭代
+  - 要逐块读取文件，可以指定chunksize（行数）,
+  - 返回的这个TextParser对象以根据chunksize对文件进行逐块迭代
+  - nrows指定读取几行（避免读取整个文件）
+    ```Python
+    chunksizer = pd.read_csv('examples/ex6.csv', chunksize=1000)
+    tot = pd.Series([])
+    for piece in chunksizer:
+        tot = tot.add(piece['key'].value_counts(), fill_value=0)
+
+    tot = tot.sort_values(ascending=False)
+    ```
+  
+- 将数据写出到文本格式
+  - Series.to_csv()
+  - df.to_csv()
+    ```Python
+    data = pd.read_csv('examples/ex5.csv')
+    data.to_csv('examples/out.csv')
+    !type examples\out.csv
+    
+    # 使用其他分隔符
+    import sys
+    data.to_csv(sys.stdout, sep='|')
+    
+    # 缺失值在输出结果中会被表示为空字符串，
+    # 也可以表示为别的标记值
+    data.to_csv(sys.stdout, na_rep='Null')
+    
+    # 如果没有设置其他选项，则会写出行和列的标签
+    # 它们也都可以被禁用
+    data.to_csv(sys.stdout, index=False, header=False)
+    
+    # 可以只写出一部分的列，并以你指定的顺序排列
+    data.to_csv(sys.stdout, index=False, columns=['a', 'b', 'c'])
+    ```
+    
+- 处理分隔符格式
+- JSON数据
+- XML和HTML：Web信息收集
+- 利用lxml.objectify解析
+
+
+  
+  
+
 
 
 ## 10 数据聚合与分组
