@@ -522,9 +522,9 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   - pd.read_feather()
 
 - read_csv()
+- refer to: https://www.bookstack.cn/read/pyda-2e-zh/6.1.md
 
   ```Python
-  refer to: https://www.bookstack.cn/read/pyda-2e-zh/6.1.md
   
   # 原始内容输出到屏幕上
   !type examples/ex5.csv # Windows
@@ -651,9 +651,101 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 
 - 利用lxml.objectify解析
 
+
+### 6.2 二进制数据格式
+- pandas内置支持两个二进制数据格式：
+- HDF5和MessagePack
+- pandas或NumPy数据的其它存储格式有:
+- bcolz Feather
+- Python pickle
+  ```Python
+  frame = pd.read_csv('examples/.csv')
+  frame.to_pickle('examples/frame_pickle')
+  pd.read_pickle('examples/frame_pickle')
+  ```
+- HDF5是一种存储大规模科学数组数据的非常好的文件格式, 可以高效地分块读写
+- 本地处理海量数据，我建议你好好研究一下PyTables和h5py
+
+- 读取Microsoft Excel文件
+  - pandas的ExcelFile类或pandas.read_excel函数支持读取存储在Excel 2003（或更高版本）中的表格型数据
+  - 这两个工具分别使用扩展包xlrd和openpyxl读取XLS和XLSX文件
+  - 用pip或conda安装它们
+    ```Python
+    
+    # 要使用ExcelFile，通过传递xls或xlsx路径创建一个实例
+    xlsx = pd.ExcelFile('exampples/ex1.xlsx')
   
+    # 存储在表单中的数据可以read_excel读取到DataFrame
+    pd.read_excel(xlsx, 'sheet1') 
+    # 如果要读取一个文件中的多个表单，创建ExcelFile会更快，
+    # 但你也可以将文件名传递到pandas.read_excel
+    frame = pd.read_excel('examples/ex1.xlsx', 'Sheet1')
+    
+    # 将pandas数据写入为Excel格式，你必须首先创建一个ExcelWriter
+    writer = pd.ExcelWriter('examples/ex2.xlsx')
+    frame.to_excel(writer, 'sheet1')
+    writer.save()
+    # 或者不使用ExcelWrite,直接使用 to_excel
+    frame.to_excel('examples/ex2.xlsx')
+    ```
+    
+### 6.3 Web APIs交互
+- 许多网站都有一些通过JSON或其他格式提供数据的公共API
+- Python访问这些API:requests包
+  ```Python
+  import requests
+  
+  url = ''
+  resp = requests.get(url)
+  # 响应对象的json方法会返回一个包含被解析过的JSON字典
+  data = resp.json()
+  issues = pd.DataFrame(data. columns=['number', 'title',
+                                       'labels', 'state'])
+  ```
+  
+### 6.4 数据库交互
+  ```Python
+  import sqlite3
+  
+  query = """
+        CREATE TABLE test(
+        a varchar(20),
+        b varchar(20),
+        c real,
+        d integer
+        );"""
+  con = sqlite3.connect('mydata.sqlite')
+  con.execute('drop table if exists test')
+  con.execute(query)
+  con.commit()
+  
+  data = [('Atlanta', 'Gerorgia', 1.25, 6),
+        ('Tallahassee', 'Florida', 2.6, 3),
+        ('Sacramento', 'California', 1.7, 5)]
+
+  stmt = 'INSERT INTO test VALUEs(?, ?, ?, ?)'
+  con.executemany(stmt, data)
+  
+  # way 1
+  # 从表中选取数据时，大部分Python SQL驱动器
+  #（PyODBC、psycopg2、MySQLdb、pymssql等）都会返回一个元组列表
+  cursor = con.execute('select * from test')
+  rows = cursor.fetchall()
+  
+  # 构造列名（位于光标的description属性中）
+  cursor.description
+  pd.DataFrame(rows, columns=[x[0] for x in cursor.description])
+  
+  # way2
+  # 用SQLAlchemy连接SQLite数据库，并从之前创建的表读取数据
+  import sqlalchemy as sqla
+  db = sqla.create_engine('sqlite:///mydata.sqlite')
+  pd.read_sql('select * from test', db)
+  ```
   
 
+    
+    
 
 
 ## 10 数据聚合与分组
