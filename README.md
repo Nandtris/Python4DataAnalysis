@@ -744,10 +744,35 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   ```
   
 
+## 7 数据清洗和准备
+- 在数据分析和建模的过程中，相当多的时间要用在数据准备上：加载、清理、转换以及重塑
+- 本章讨论处理缺失数据、重复数据、字符串操作和其它分析数据转换的工具
+
+### 7.1  处理缺失数据
+- pandas对象的所有描述性统计默认都不包括缺失数据
+  - 对于数值数据，pandas浮点值`NaN（Not a Number）`表示缺失数据
+    `string_data = pd.Series(['aardvark','artichoke', np.nan,'avocado'])`
+  - 缺失值表示为`NA(not available, R语言用法)`:
+  - NA数据可能是不存在的数据或者虽然存在，但是没有观察到（例如，数据采集中发生了问题）
+  - 当进行数据清洗以进行分析时，
+  - 最好直接对缺失数据进行分析，以判断数据采集的问题或缺失数据可能导致的偏差。
+  - 缺失数据处理的函数:
+    - dropna
+    - fillna
+    - isnull
+    - notnull
+- 滤除缺失数据
+  - Series
+    ```Python
+    data.dropna() == data[data.notnull()] # True
+    ```     
+  - DataFrame
+    - dropna默认丢弃任何含有缺失值的行
+    - `how`丢弃全为`NA`的行/列， axis=1/0 列行
+      `data.dropna(axis=1, how='all')`
     
     
-
-
+    
 ## 10 数据聚合与分组
 
 将数据集加载、融合、准备好之后，通常就是计算分组统计或生成透视表。<br>
