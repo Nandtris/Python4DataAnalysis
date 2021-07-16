@@ -695,7 +695,7 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   ```Python
   import requests
   
-  url = ''
+  url = 'https://api.github.com/repos/pandas-dev/pandas/issues'
   resp = requests.get(url)
   # 响应对象的json方法会返回一个包含被解析过的JSON字典
   data = resp.json()
