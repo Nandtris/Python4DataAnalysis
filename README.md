@@ -796,9 +796,34 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 
 ### 7.2 数据转换
 - 移除重复数据
-  - 
+  - `df.duplicates()` 返回一个布尔型Series，表示各行是否是重复行
+  - `df.drop_duplicates()` 返回一个DataFrame
+  - duplicated和drop_duplicates默认保留的是第一个出现的值组合
+  - `df.drop_duplicates(['k1', 'k2'], keep='last')` 取k1, k2两列，重复值保留最后一个
+  
+- 利用函数或映射进行数据转换 Series.map()
+  ```Python
+  data = pd.DataFrame({'food': ['bacon', 'pulled pork', 'bacon',
+                                'Pastrami', 'corned beef', 'Bacon',
+                                'pastrami', 'honey ham', 'nova lox'],
+                                'ounces': [4, 3, 12, 6, 7.5, 8, 3, 5, 6]})
+  meat_to_animal = {
+    'bacon': 'pig',
+    'pulled pork': 'pig',
+    'pastrami': 'cow',
+    'corned beef': 'cow',
+    'honey ham': 'pig',
+    'nova lox': 'salmon'}
 
+  # Series的map方法可以接受一个函数或含有映射关系的字典型对象
+  lowercased = data['food'].str.lower()
+  data['animal'] = lowercased.map(meat_to_animal)
+  data
 
+  data['food'].map(lambda x: meat_to_animal[x.lower()])
+  data
+  ```
+  
 
 - 利用函数或映射进行数据转
 - 替换值
