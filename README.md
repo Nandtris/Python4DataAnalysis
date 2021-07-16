@@ -556,7 +556,7 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   # na_values可以用一个列表或集合的字符串表示缺失值
   !cat examples/ex5.csv
   result = pd.read_csv('examples/ex5.csv')
-  result = pd.read_csv('examples/ex5.csv'， na_values=['Null'])
+  result = pd.read_csv('examples/ex5.csv', na_values=['Null'])
   # 字典可以使不同的列标记缺失值
   sentinels = {'message': ['foo', 'NA'], 'something': ['two']}
   pd.read_csv('examples/ex5.csv', na_values=sentinels)
