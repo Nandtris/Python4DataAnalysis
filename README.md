@@ -761,6 +761,7 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
     - fillna
     - isnull
     - notnull
+    
 - 滤除缺失数据
   - Series
     ```Python
@@ -768,10 +769,46 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
     ```     
   - DataFrame
     - dropna默认丢弃任何含有缺失值的行
-    - `how`丢弃全为`NA`的行/列， axis=1/0 列行
-      `data.dropna(axis=1, how='all')`
+    ```Python
     
-    
+    # 丢弃全为`NA`的列
+    data.dropna(axis=1, how='all')
+
+    # 这一行除去NA值，剩余数值的数量大于等于n，便显示这一行
+    df.dropna(thresh=2)
+    ```
+      
+ - 填充缺失数据
+  - fillna默认会返回新对象，但也可以对现有对象进行就地修改
+    ```Python
+    df = pd.DataFrame(np.random.randn(7,3), columns=['a', 'b', 'c'])
+    df.iloc[:4,1]= np.nan
+    df.iloc[:2,2]= np.nan
+
+    df.fillna(0) # 把所有 NA 值填充为0
+
+    # 把 b，c 列 NA 值分别填充为 0.5，0
+    df.fillna({'b': 0.5, 'c':0})
+
+    # 对现有对象进行就地修改
+    _ = df.fillna(0, inplace=True)
+    ```
+
+### 7.2 数据转换
+- 移除重复数据
+  - 
+
+
+
+- 利用函数或映射进行数据转
+- 替换值
+- 重命名轴索引
+- 离散化和面元划分
+- 检测和过滤异常值
+- 排列和随机采样
+- 计算指标/哑变量
+      
+
     
 ## 10 数据聚合与分组
 
