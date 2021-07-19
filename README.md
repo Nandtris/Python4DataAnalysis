@@ -796,7 +796,7 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 
 ### 7.2 数据转换
 - 移除重复数据
-  - `df.duplicates()` 返回一个布尔型Series，表示各行是否是重复行
+  - `df.duplicated()` 返回一个布尔型Series，表示各行是否是重复行
   - `df.drop_duplicates()` 返回一个DataFrame
   - duplicated和drop_duplicates默认保留的是第一个出现的值组合
   - `df.drop_duplicates(['k1', 'k2'], keep='last')` 取k1, k2两列，重复值保留最后一个
@@ -824,12 +824,77 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   data
   ```
   
+- 替换值 `data.replace()`
+  ```Python
+  data = pd.Series([1., -999, 2., -999,  -1000, 3.])
+  data.replace(-999, np.nan)
+  data.replace([-999, -1000), np.nan)
+  data.replace([-999, -1000], [np.nan, 0])
+  data.replace({-999: np.nan, -1000: 0})
+  ```
+  
+- 重命名轴索引 `data.rename(), Series.map()`
+  ```Python
+  data = pd.DataFrame(np.random.randn(12).reshape(3, 4),
+                      index = ['Ohio', 'Colorado', 'New York'],
+                      columns = ['one', 'two', 'three', 'four'])
+  # data.map()
+  transform = lambda x: x[:4].upper()
+  data.index.map(transform)
+  data = data.columns.map(transform)
+  
+  # data.rename()
+  # 返回新的转换数据集
+  data.rename(index=str.title, columns=str.upper)
+  # 修改轴索引部分值, 返回新的数据集
+  data.rename(index={'OHIO': 'INDIAN', }, 
+               columns={'FOUR': 'peekboo'})
+  # 地修改数据集
+  data.rename(index=str.title, inplace=True)
 
-- 利用函数或映射进行数据转
-- 替换值
-- 重命名轴索引
 - 离散化和面元划分
+  - 连续数据常常被离散化或拆分为“面元”（bin）
+  - `data.cut`  等长，每组均1米长
+  - `data.qcut` 等量，每组值数量基本相同
+  - 这两个离散化函数对分位和分组分析非常重要
+    ```Python
+    ages = [20,22,25,27,21,23,37,31,61,45,41,32]
+    bins = [18, 25, 35, 60, 100]
+    cats = pd.cut(ages, bins)
+    
+    # 值属于哪个分组
+    cats.code() # array([0,0,0,1,0,0,2,1,3,2,2,1], dtype=int8)
+    cats.categories
+    # IntervalIndex([(18,25],(25,35],(35,60],(60,100]]
+    #           closed='right',
+    #           dtype='interval[int64]')
+    pd.value_counts(cats) # 计数每个分组值数量
+    
+    group_names =['Youth','YoungAdult','MiddleAged','Senior']
+    pd.cut(ages, bins, labels=group_names)
+    
+    # 根据数据的最小值和最大值计算等长面元
+    # 限定小数只有两位
+    data = np.random.rand(20)
+    pd.cut(data, 4, precision=2)
+    
+    data = np.random.randn(1000)
+    pd.qcut(data, 4) #各组含有相同数量的数据点
+    ```
+
 - 检测和过滤异常值
+  ```Python
+  data=pd.DataFrame(np.random.randn(1000,4))
+  data.describe()
+  
+  col = data[2]
+  col[np.abs(col)>3]
+  
+  data[(np.abs(data)>3).any(1)]
+  data[np.abs(data)>3]= np.sign(data)*3
+  np.sign(data).head() # np.sign(data)可以生成1和-1
+  ```
+
 - 排列和随机采样
 - 计算指标/哑变量
       
