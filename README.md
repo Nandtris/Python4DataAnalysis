@@ -896,6 +896,20 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   ```
 
 - 排列和随机采样
+  ```Python
+  df = pd.DataFrame(np.arange(5*4).reshape(5, 4))
+  # 随机重排列 df 0 轴索引
+  sampler = np.random.permutation(5)
+  df.take(sampler)
+  
+  # 产生随机子集
+  # sample: Series和DataFrame
+  df.sample(n=3)
+  choices = pd.Series([5,7,-1,6,4])
+  # 产生样本（允许重复选择）
+  draws = choices.sample(n=10, replace=True)
+  ```
+  
 - 计算指标/哑变量
       
 
