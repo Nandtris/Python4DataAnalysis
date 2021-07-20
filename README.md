@@ -911,7 +911,22 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   ```
   
 - 计算指标/哑变量
-      
+
+### 7.3 字符串操作
+- regex
+  - re模块的函数可以分为三个大类：模式匹配、替换以及拆分
+  - 描述一个或多个空白符 `\s+`
+  - re.compile
+  - findall
+  - pattern = r'[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}'
+  - regex = re.compile(pattern, flags=re.IGNORECASE)
+  - regex.search
+  - regex.match
+  - regex.sub
+
+- pandas的矢量化字符串函数
+  - pansas.Series.str.xx
+  - ...
 
     
 ## 10 数据聚合与分组
