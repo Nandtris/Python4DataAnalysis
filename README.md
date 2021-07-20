@@ -928,6 +928,15 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   - pansas.Series.str.xx
   - ...
 
+
+## 8 数据规整：聚合、合并和重塑
+- pandas的层次化索引
+- 深入介绍了一些特殊的数据操作（14章应用）
+
+### 8.1 hierarchical indexing
+- 
+
+
     
 ## 10 数据聚合与分组
 
