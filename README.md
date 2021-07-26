@@ -1048,47 +1048,47 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
   ```
   
 - 轴向连接 concat
-```Python
-arr = np.arange(12).reshape((3, 4))
-np.concatenate([arr, arr], axis=1)
+  ```Python
+  arr = np.arange(12).reshape((3, 4))
+  np.concatenate([arr, arr], axis=1)
 
-# Series 无重叠索引
-s1 = pd.Series([0, 1], index=['a', 'b'])
-s2 = pd.Series([2, 3, 4], index=['c', 'd', 'e'])
-s3 = pd.Series([5, 6], index=['f', 'g'])
-pd.concat([s1, s2, s3]) # 默认 axis=0
-pd.concat([s1, s2, s3], axis=1) # 注意下面结果
+  # Series 无重叠索引
+  s1 = pd.Series([0, 1], index=['a', 'b'])
+  s2 = pd.Series([2, 3, 4], index=['c', 'd', 'e'])
+  s3 = pd.Series([5, 6], index=['f', 'g'])
+  pd.concat([s1, s2, s3]) # 默认 axis=0
+  pd.concat([s1, s2, s3], axis=1) # 注意下面结果
 
- 	    0 	  1 	  2
-a 	0.0 	NaN 	NaN
-b 	1.0 	NaN 	NaN
-c 	NaN 	2.0 	NaN
-d 	NaN 	3.0 	NaN
-e 	NaN 	4.0 	NaN
-f 	NaN 	NaN 	5.0
-g 	NaN 	NaN 	6.0    
+        0 	  1 	  2
+  a 	0.0 	NaN 	NaN
+  b 	1.0 	NaN 	NaN
+  c 	NaN 	2.0 	NaN
+  d 	NaN 	3.0 	NaN
+  e 	NaN 	4.0 	NaN
+  f 	NaN 	NaN 	5.0
+  g 	NaN 	NaN 	6.0    
 
-# 在连接轴上创建一个层次化索引
-result = pd.concat([s1, s1, s3], keys=['one','two', 'three'])
-# keys成为DataFrame的列头
-pd.concat([s1, s2, s3], axis=1, keys=['one','two', 'three'])
+  # 在连接轴上创建一个层次化索引
+  result = pd.concat([s1, s1, s3], keys=['one','two', 'three'])
+  # keys成为DataFrame的列头
+  pd.concat([s1, s2, s3], axis=1, keys=['one','two', 'three'])
 
-df1 = pd.DataFrame(np.arange(6).reshape(3, 2), index=['a', 'b', 'c'],
-                   columns=['one', 'two'])
-df2 = pd.DataFrame(5 + np.arange(4).reshape(2, 2), index=['a', 'c'], 
-                   columns=['three', 'four'])
-pd.concat([df1, df2], axis=1, keys=['level1', 'level2'])
-pd.concat({'level1': df1, 'level2': df2}, axis=1) # 结果同上
+  df1 = pd.DataFrame(np.arange(6).reshape(3, 2), index=['a', 'b', 'c'],
+                     columns=['one', 'two'])
+  df2 = pd.DataFrame(5 + np.arange(4).reshape(2, 2), index=['a', 'c'], 
+                     columns=['three', 'four'])
+  pd.concat([df1, df2], axis=1, keys=['level1', 'level2'])
+  pd.concat({'level1': df1, 'level2': df2}, axis=1) # 结果同上
 
-pd.concat([df1, df2], axis=1, keys=['level1', 'level2'],
-          names=['upper', 'lower'])
+  pd.concat([df1, df2], axis=1, keys=['level1', 'level2'],
+            names=['upper', 'lower'])
 
 
-f1 = pd.DataFrame(np.random.randn(3, 4), columns=['a', 'b', 'c', 'd'])
-df2 = pd.DataFrame(np.random.randn(2, 3), columns=['b', 'd', 'a'])
-pd.concat([df1, df2], ignore_index=True) # 忽略原数据索引
-pd.concat([df2, df1])
-```
+  f1 = pd.DataFrame(np.random.randn(3, 4), columns=['a', 'b', 'c', 'd'])
+  df2 = pd.DataFrame(np.random.randn(2, 3), columns=['b', 'd', 'a'])
+  pd.concat([df1, df2], ignore_index=True) # 忽略原数据索引
+  pd.concat([df2, df1])
+  ```
 
 - 合并重叠数据
   ```Python
@@ -1111,8 +1111,37 @@ pd.concat([df2, df1])
   df1.combine_first(df2)
   ```
 
-### 8.3 重塑和轴向旋转
-- 
+### 8.3 重塑（reshape）和轴向旋转（pivot）
+- 重塑层次化索引
+  - stack 将数据的列“旋转”为行
+  - unstack 
+    ```Python
+    ata = pd.DataFrame(np.arange(6).reshape((2, 3)),
+                   index=pd.Index(['Ohio', 'Colorado'], name='state'),
+                   columns=pd.Index(['one', 'two', 'three'], name='number'))
+    result = data.stack()
+    result.unstack()
+    
+    # 默认情况下，unstack操作的是最内层（stack也是如此）。
+    # 传入分层级别的编号或名称即可对其它级别进行unstack操作
+    result.unstack(0)
+    result.unstack('state') # 结果同上
+
+    # unstack操作可能会引入缺失数据
+    s1 = pd.Series([0, 1, 2, 3], index=['a', 'b', 'c', 'd'])
+    s2 = pd.Series([4, 5, 6], index=['c', 'd', 'e'])
+    data2 = pd.concat([s1, s2], keys=['one', 'two'])
+    # 运算是可逆的
+    data2.unstack()
+    data2.unstack().stack()
+    data2.unstack().stack(dropna=False)
+
+    df = pd.DataFrame({'left': result, 'right': result+5},
+                      columns=pd.Index(['left', 'right'], name='side'))
+    df.unstack('state').stack('side')
+    ```
+- 将“长格式”旋转为“宽格式”
+- 将“宽格式”旋转为“长格式”
 
 
 ## 10 数据聚合与分组
