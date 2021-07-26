@@ -934,10 +934,167 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 - 深入介绍了一些特殊的数据操作（14章应用）
 
 ### 8.1 hierarchical indexing
-- 
+- Series
+  ```Python
+  data = pd.Series(np.random.randn(9),
+                   index=[['a', 'a', 'a', 'b', 'b', 'c', 'c', 'd', 'd'],
+                          [1, 2, 3, 1, 3, 1, 2, 2, 3]])
+  data.index
+  data['b']
+  data['b':'c']
+  data.loc[['b', 'd']]
+  # 全选外层，内层索引为“2”的行
+  data.loc[:, 2]
+  # 内层索引变为列标签-->DataFrame
+  data.unstack()
+  ```
+- DataFrame 列索引
+  ```Python
+  frame = pd.DataFrame(np.arange(12).reshape((4, 3)),
+                    index=[['a', 'a', 'b', 'b'],[1, 2, 1, 2]],
+                    columns=[['Ohio', 'Ohio', 'Colorado'], ['Green', 'Red', 'Green']])
+  
+  # 各层都可以有名字（可以是字符串，也可以是别的Python对象）
+  frame.index.names = ['key1', 'key2']
+  frame.columns.names = ['state', 'color']
+  
+  frame['Ohio']
+  ```
 
-
+- 使用DataFrame的列进行索引
+  - 将DataFrame的列当做行索引来用
+  - 将行索引变成DataFrame的列
+    ```Python
+    frame = pd.DataFrame({'a': range(7), 'b':range(7, 0, -1),
+                     'c': ['one', 'one', 'one', 'two', 'two', 
+                           'two', 'two'],
+                     'd': [0, 1, 2, 0, 1, 2, 3]})
     
+    # c d 列变成行索引，列中丢弃 c d 列
+    frame2 = frame.set_index(['c', 'd'])
+    frame.set.index(['c', 'd'], drop=False) # 保留cd列
+    
+    frame2.reset_inedx() # set_index 反函数
+    ```
+    
+### 8.2 合并数据集
+- pandas.merge可根据一个或多个键将不同DataFrame中的行连接起来。SQL-join操作。
+- pandas.concat可以沿着一条轴将多个对象堆叠到一起。
+- 实例方法combine_first可以将重复数据拼接在一起，用一个对象中的值填充另一个对象中的缺失值。
+
+- merge
+  ```Python
+  # pandas.merge
+  # how = inner  left  right  outer
+
+  # 多对一
+  df1 = pd.DataFrame({'key': ['b', 'b', 'a', 'c', 'a', 'a', 'b'],
+                      'data1': range(7)})
+  df2 = pd.DataFrame({'key': ['a', 'b', 'd'],
+                      'data2': range(3)}
+
+  pd.merge(df1, df2, on='key')
+
+  # 列名不同，分别指定
+  df3 = pd.DataFrame({'lkey': ['b', 'b', 'a', 'c', 'a', 'a', 'b'],
+                      'data1': range(7)})
+  df4 = pd.DataFrame({'rkey': ['a', 'b', 'd'],
+                      'data2': range(3)})
+  pd.merge(df3, df4, left_on='lkey', right_on='rkey')
+
+  # 多对多
+  # 笛卡儿积
+  df1 = pd.DataFrame({'key': ['b', 'b', 'a', 'c', 'a', 'b'],
+                      'data1': range(6)})
+  df2 = pd.DataFrame({'key': ['a', 'b', 'a', 'b', 'd'],
+                      'data2': range(5)})
+
+  pd.merge(df1, df2, on='key', how='left')
+  pd.merge(df1, df2, how='inner')
+
+  left = pd.DataFrame({'key1': ['foo', 'foo', 'bar'],
+                       'key2': ['one', 'two', 'one'],
+                       'lval': [1, 2, 3]})
+  right = pd.DataFrame({'key1': ['foo', 'foo', 'bar', 'bar'],
+                        'key2': ['one', 'one', 'one', 'two'],
+                        'rval': [4, 5, 6, 7]})
+
+  pd.merge(left, right, on=['key1', 'key2'], how='outer')
+
+  # 重复列名的处理
+  pd.merge(left, right, on='key1') # 自动为重复列添加'_x','_y'
+  pd.merge(left, right, on='key1', suffixes=['_left', '_right'])
+  ```
+
+- DataFrame 索引上的合并
+  ```Python
+  left1 = pd.DataFrame({'key': ['a', 'b', 'a', 'a', 'b', 'c'],
+                        'value': range(6)})
+  right1 = pd.DataFrame({'grouop_val': [3.5, 7]}, index=['a', 'b'])
+
+  pd.merge(left1, right1, left_on='key', right_index=True) # 默认取并集
+  pd.merge(left1, right1, left_on='key', right_index=True, how='outer')
+
+  # 层次化索引
+  lefth = pd.DataFrame({'key1': ['Ohio', 'Ohio', 'Ohio', 'Nevada', 'Nevada'],
+                        'key2': [2000, 2001, 2002, 2001, 2002],
+                        'data': np.arange(5.)})
+  righth = pd.DataFrame(np.arange(12).reshape((6, 2)),
+                        index=[['Nevada', 'Nevada', 'Ohio', 'Ohio', 'Ohio', 'Ohio'],
+                               [2001, 2000, 2000, 2000, 2001, 2002]],
+                        columns=['event1', 'event2'])
+  pd.merge(lefth, righth, left_on=['key1', 'key2'],
+          right_index=True, how='outer')
+  ```
+  
+- 轴向连接 concat
+```Python
+arr = np.arange(12).reshape((3, 4))
+np.concatenate([arr, arr], axis=1)
+
+# Series 无重叠索引
+s1 = pd.Series([0, 1], index=['a', 'b'])
+s2 = pd.Series([2, 3, 4], index=['c', 'd', 'e'])
+s3 = pd.Series([5, 6], index=['f', 'g'])
+pd.concat([s1, s2, s3]) # 默认 axis=0
+pd.concat([s1, s2, s3], axis=1) # 注意下面结果
+
+ 	    0 	  1 	  2
+a 	0.0 	NaN 	NaN
+b 	1.0 	NaN 	NaN
+c 	NaN 	2.0 	NaN
+d 	NaN 	3.0 	NaN
+e 	NaN 	4.0 	NaN
+f 	NaN 	NaN 	5.0
+g 	NaN 	NaN 	6.0    
+
+# 在连接轴上创建一个层次化索引
+result = pd.concat([s1, s1, s3], keys=['one','two', 'three'])
+# keys成为DataFrame的列头
+pd.concat([s1, s2, s3], axis=1, keys=['one','two', 'three'])
+
+df1 = pd.DataFrame(np.arange(6).reshape(3, 2), index=['a', 'b', 'c'],
+                   columns=['one', 'two'])
+df2 = pd.DataFrame(5 + np.arange(4).reshape(2, 2), index=['a', 'c'], 
+                   columns=['three', 'four'])
+pd.concat([df1, df2], axis=1, keys=['level1', 'level2'])
+pd.concat({'level1': df1, 'level2': df2}, axis=1) # 结果同上
+
+pd.concat([df1, df2], axis=1, keys=['level1', 'level2'],
+          names=['upper', 'lower'])
+
+
+f1 = pd.DataFrame(np.random.randn(3, 4), columns=['a', 'b', 'c', 'd'])
+df2 = pd.DataFrame(np.random.randn(2, 3), columns=['b', 'd', 'a'])
+pd.concat([df1, df2], ignore_index=True) # 忽略原数据索引
+pd.concat([df2, df1])
+```
+
+- 合并重叠数据
+
+
+
+
 ## 10 数据聚合与分组
 
 将数据集加载、融合、准备好之后，通常就是计算分组统计或生成透视表。<br>
