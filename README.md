@@ -1144,10 +1144,30 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 - 将“宽格式”旋转为“长格式”
 
 
+
+## 9 绘图和可视化
+
+- notebook中使用plt绘图共有三种模式
+  - `%matplotlib inline` 默认的模式，输出的图片是静态的
+  - `%matplotlib auto` 这个模式下会弹出一个单独的绘图窗口
+  - `%matplotlib notebook` 这个模式下会在notebook中产生一个绘图窗口，能够对图片进行放大缩小等操作。
+    - 有时候修改完没有变化，重启notebook就好了
+
+### 9.1 matplotlib API 入门
+
+`import matplotlib.pyplot as plt`
+
+- Figure Subplot
+  - matplotlib的图像都位于Figure对象中
+  - 
+
+
+
 ## 10 数据聚合与分组
 
 将数据集加载、融合、准备好之后，通常就是计算分组统计或生成透视表。<br>
 pandas提供了一个灵活高效的gruopby功能，它使你能以一种自然的方式对数据集进行切片、切块、摘要等操作。<br>
+
 - 使用一个或多个键（形式可以是函数、数组或DataFrame列名）分割pandas对象;
 - 计算分组的概述统计，比如数量、平均值或标准差，或是用户定义的函数;
 - 应用组内转换或其他运算，如规格化、线性回归、排名或选取子集等;
@@ -1156,6 +1176,7 @@ pandas提供了一个灵活高效的gruopby功能，它使你能以一种自然�
 - 对时间序列数据的聚合(ch11)
 
 ### 10.1 聚合与分组运算
+
 分组键可以有多种形式，且类型不必相同：<br>
 - 列表或数组，其长度与待分组的轴一样
 - 字典或Series，给出待分组轴上的值与分组名之间的对应关系
