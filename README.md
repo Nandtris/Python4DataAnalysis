@@ -1159,8 +1159,156 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 
 - Figure Subplot
   - matplotlib的图像都位于Figure对象中
-  - 
+```Python 
+fig = plt.figure()
+ax1 = fig.add_subplot(2, 2, 1) # 图像应该是2×2的（即最多4张图）
+ax2 = fig.add_subplot(2, 2, 2) # 取第二个图表
+ax3 = fig.add_subplot(2, 2, 3)
 
+# matplotlib就会在最后一个用过的subplot（如果没有则创建一个）上进行绘制，
+# 隐藏创建figure和subplot的过程
+plt.plot([1.5, 3.5, -2, 1.6])
+# 绘制黑色虚线图
+plt.plot(np.random.randn(50).cumsum(),'k--')
+# fig.add_subplot所返回的对象是AxesSubplot对象
+# 直接调用它们的实例方法就可以在里面画图
+ax1.hist(np.random.randn(100), bins=20, color='k', alpha=0.3)
+ax2.scatter(np.arange(30), np.arange(30)+3*np.arange(30))
+  
+
+# 创建一个新的Figure，并返回一个含有已创建的subplot对象的NumPy数组
+fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
+# axes[0, 1]
+# subplots_adjust(left=None, bottom=None, right=None, top=None,
+#                 wspace=None, hspace=None)
+for i in range(2):
+    for j in range(2):
+        axes[i, j].hist(np.random.randn(500), bins=50, color='k', alpha=0.5)
+# 控制宽度和高度的百分比，可以用作subplot之间的间距
+plt.subplots_adjust(wspace=0, hspace=0)
+
+
+# 颜色、标记和线型
+# IPython和Jupyter中使用 plot？查看线形合集
+ax.plot(x, y, 'g--')
+ax.plot(x, y, linestyle='--', color='g')
+
+from numpy.random import randn
+plt.plot(randn(30).cumsum(), 'ko--')
+plt.plot(randn(30).cumsum(), color='k', linestyle='dashed', marker='o' ) # 效果同上
+
+
+# 刻度、标签和图例
+
+# 1 设置标题、轴标签、刻度以及刻度标签
+
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
+ax.plot(np.random.randn(1000).cumsum())
+
+ticks = ax.set_xticks([0, 250, 500, 750, 1000])
+# rotation 设定x刻度标签倾斜30度
+labels = ax.set_xticklabels(['one', 'two', 'three', 'four', 'five'],
+                             rotation=30, fontsize='small')
+ax.set_title('My firt matplot plot')
+ax.set_xlabel('Stages')
+
+# y 轴修改类类似x轴
+props = {
+    'title': 'some titles',
+    'ylabel': 'Aboult'}
+ax.set(**props)
+
+
+# 2 图例 legend
+# 添加subplot的时候传入label参数
+
+from numpy.random import randn
+fig = plt.figure(); ax = fig.add_subplot(1,1,1)
+
+ax.plot(randn(1000).cumsum(), 'k', label='one')
+ax.plot(randn(1000).cumsum(), 'k--', label='two')
+ax.plot(randn(1000).cumsum(), 'k.', label='three')
+
+# best会选择最不碍事的位置。
+# 要从图例中去除一个或多个元素，不传入label或传入label=‘nolegend‘
+ax.legend(loc='best') # jupyter notebook 使用 ax.legend? 查看文档
+
+
+# 3 注解以及在Subplot上绘图
+
+# 注解和文字可以通过text、arrow和annotate函数进行添加
+# 将文本绘制在图表的指定坐标(x,y)，还可以加上一些自定义格式
+ax.text(x, y, 'Hello word!',
+        family='monospace', fontsize=10)
+        
+# 股票走势示例 
+from datetime import datetime
+
+fig = plt.figure()
+ax = fig.add_subplot(1,1,1)
+
+data = pd.read_csv('examples/spx.csv', index_col=0, parse_dates=True)
+spx = data['SPX']
+
+spx.plot(ax=ax, style='k-')
+
+crisis_data = [
+    (datetime(2007,10,11), 'Peak of bull market'),
+    (datetime(2008,3,12), 'Bear Stearns Fails'),
+    (datetime(2008,9,15), 'Lehman Bankruptcy')]
+
+for date, label in crisis_data:
+    ax.annotate(label, xy=(date, spx.asof(date)+75), # 横坐标，纵坐标，箭头尖端位置
+                xytext=(date, spx.asof(date)+225), # 文字的坐标，指的是最左边的坐标
+                arrowprops=dict(facecolor='black', headwidth=4, width=2, headlength=4),
+                horizontalalignment='left', verticalalignment='top')
+# Zoom in on 2007-2010
+ax.set_xlim(['1/1/2007', '1/1/2010'])
+ax.set_ylim([600, 1800])
+
+ax.set_title('Important dates in the 2008-2009 financial crisis')
+
+
+# 绘图
+# matplotlib有一些表示常见图形的对象。这些对象被称为块（patch）。
+# 其中有些（如Rectangle和Circle），可以在matplotlib.pyplot中找到，
+# 但完整集合位于matplotlib.patches。
+
+# 在图表中添加一个图形，
+# 要创建一个块对象shp，
+# 然后通过ax.add_patch(shp)将其添加到subplot中
+
+fig = plt.figure()
+ax = fig.add_subplot(1,1,1)
+
+rect = plt.Rectangle((0.2, 0.75), 0.4, 0.15, color='k', alpha=0.3)
+circ = plt.Circle((0.7, 0.2), 0.15, color='b', alpha=0.3)
+pgon = plt.Polygon([[0.15, 0.15], [0.35, 0.4], [.2, .6]], color='g', alpha=.5)
+
+ax.add_patch(rect)
+ax.add_patch(circ)
+ax.add_patch(pgon)
+
+
+# 将图表保存到文件
+
+# plt.savefig可以将当前图表保存到文件
+plt.savefig('figpath.svg')
+# dpi 控制“每英寸点数”分辨率
+# bbox_inches 可以剪除当前图表周围的空白部分
+plt.savefig('figpath.svg', dpi=400, bbox_inches='tight')
+
+
+# savefig并非一定要写入磁盘，也可以写入任何文件型的对象
+from io importBytesIO
+buffer =BytesIO()
+plt.savefig(buffer)
+plot_data = buffer.getvalue()
+
+# matplotlib配置
+# https://www.bookstack.cn/read/pyda-2e-zh/9.1.md
+```
 
 
 ## 10 数据聚合与分组
