@@ -1,6 +1,28 @@
 # Python4DataAnalysis 2ed
 online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 
+## 2 Python语法基础
+### 2.2 IPython基础
+- 启动：IPython
+- tab补全
+  - 函数名
+  - 模块名
+  - 路径...
+- 魔法命令
+  - `%run *.py` 运行脚本（结合tab补全路径，方便）
+  - `%time` 返回执行一条语句的时间
+  - `%timeit` 返回多次执行一条语句的平均时间
+  - `%load ipython__script_test.py` 导入脚本代码
+  - `foo = %pwd` 赋值给变量
+  - `%paste\%cpaste` 直接运行剪切板代码\多次手动粘贴代码
+  - `%matplotlib` 配置IPython_matplotlib
+  - `%matplotlib inline` Jupyter 配置
+  - `%quickref\%magic` IPython quick ref\all magic command
+- 函数+? 显示帮助信息
+- `Ctrl-C` 中断程序运行
+
+
+
 ## 4 Numpy 基础
 ### 4.1 numpy: ndarray 
 - import numpy as np
