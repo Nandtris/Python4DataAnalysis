@@ -21,7 +21,31 @@ online book refer to: https://www.bookstack.cn/read/pyda-2e-zh/11.5.md
 - 函数+? 显示帮助信息
 - `Ctrl-C` 中断程序运行
 
+## 3 内建数据结构 函数及文件
+### 3.1.6.1 嵌套列表推导式
+```
+# 获取一个列表含有2个以上字母 e 的名字
+all_data = [['John', 'Emily', Michael', 'Mary', 'Steven'],
+            ['Maria', 'juan', 'Jvaier', 'Natalia', 'Pilar']]
 
+# for 循环
+names_of_interest = []
+for names in all_data:
+    enough_es = [name for name in names if name.count('e') >2 2]
+    names_of_interest.extend(enough_es)
+# 推导式
+# for 表达式的顺序应当和你写嵌套 for 循环的来替代列表推导式的顺序一致
+result = [name for names in all_data 
+          for name in names if name.count('e') >= 2]
+          
+# 嵌套推导式
+some_tuples = [(1 ,2, 3), (4, 5, 6), (7, 8, 9)]
+# [1, 2, 3, 4, 5, 6, 7, 8, 9]
+flattened = [x for tup in some_tuples for x in tup]
+# 列表推导式中的列表推导式语法与上面不同
+# [[1, 2, 3,], [4, 5, 6], [7, 8, 9]]
+alist = [[x for x in tup] for tup in some_tuples]
+```
 
 ## 4 Numpy 基础
 ### 4.1 numpy: ndarray 
