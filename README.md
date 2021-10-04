@@ -50,6 +50,8 @@ alist = [[x for x in tup] for tup in some_tuples]
 ## 4 Numpy 基础
 ### 4.1 numpy: ndarray 
 - import numpy as np
+- **bool/fancy Indexing** 将数据复制到新表中
+- **切片生成视图**，对其修改会改变源数据
 - NumPy N维数组对象`ndarray`, 是一个快速而灵活的大数据集容器。
 - 你可以利用这种数组对整块数据执行一些数学运算，其语法跟标量元素之间的运算一样。
 - ndarray 其中的所有元素必须是相同类型的。
@@ -142,7 +144,7 @@ alist = [[x for x in tup] for tup in some_tuples]
     - “只有冒号”表示选取整个轴 `arr2d[:, :1]`
     - 对切片表达式的赋值操作也会被扩散到整个选区
 
-- 布尔型索引
+- 布尔型索引 --将数据复制到新表中--同fancy indexing
   - 通过布尔型索引选取数组中的数据，将总是创建数据的副本，即使返回一模一样的数组也是如此
   - Python关键字and和or在布尔型数组中无效。要使用&与|
     ```Python
@@ -152,8 +154,8 @@ alist = [[x for x in tup] for tup in some_tuples]
 
     # 布尔型数组的长度必须跟被索引的轴长度一致
     data[names == 'Bob']
-    # 以将布尔型数组跟切片、整数（或整数序列，稍后将对此进行详细讲解）混合使用
-    data[names == 'Bob', 2:]
+    # 以将布尔型数组跟切片、整数（或整数序列）混合使用
+    data[names == 'Bob', 2:] # 0轴， 1轴
 
     names != "Bob"
     # 通过~对条件进行否定
@@ -165,9 +167,40 @@ alist = [[x for x in tup] for tup in some_tuples]
     data[data < 0] = 0
     data[names != 'Joe'] = 7
     ```
-- 花式索引 Fancy indexing
+- 花式索引 Fancy indexing --将数据复制到新表中--同bool索引
   - 利用整数数组进行索引
-  - 花式索引跟切片不一样，它总是将数据复制到新数组中。
+  ```python
+  In [3]: arr = np.arange(32).reshape(8, 4)
+  In [4]: arr
+  Out[4]:
+  array([[ 0,  1,  2,  3],
+         [ 4,  5,  6,  7],
+         [ 8,  9, 10, 11],
+         [12, 13, 14, 15],
+         [16, 17, 18, 19],
+         [20, 21, 22, 23],
+         [24, 25, 26, 27],
+         [28, 29, 30, 31]])
+
+  In [5]: arr[[1, 5, 7, 2], [0, 3, 1, 2]]
+  Out[5]: array([ 4, 23, 29, 10])
+
+  In [6]: arr[[1, 3, 5, 7], [:, [0, 1, 3, 2]]]
+    File "<ipython-input-6-29d4c8fcaf89>", line 1
+      arr[[1, 3, 5, 7], [:, [0, 1, 3, 2]]]
+                         ^
+  SyntaxError: invalid syntax
+
+  In [7]: arr[[1, 3, 5, 7]][:, [0, 3, 1, 2]]
+  Out[7]:
+  array([[ 4,  7,  5,  6],
+         [12, 15, 13, 14],
+         [20, 23, 21, 22],
+         [28, 31, 29, 30]])
+  # x = arr[[1, 3, 5 , 7]]
+  # x[:, [0, 3, 1, 2]]
+  ```
+    
 - 数组转置和轴对换
 
 ### 4.2 ufuncs
