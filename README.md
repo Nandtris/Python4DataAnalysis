@@ -78,24 +78,26 @@ alist = [[x for x in tup] for tup in some_tuples]
   - ones
   - zeros
   - empty
-- ndarray dtype
+- np.astype 转换数组类型, astype 总是生成新的数组
   ```Python
   # dtype 指定ndarray数据类型
   arr = np.array(np.random.randn(9), dtype=np.float64)
+  int_arr = np.arange(10)
   # 转换数据类型
-  int_arr = arr.astype(np.int32)
+  int_arr.astype(arr.dtype)
+  int_arr2 = arr.astype(np.int32)
   ```
 - numpy 数组运算
-  - 数组使你不用编写循环即可对数据执行批量运算。
-  - NumPy用户称其为矢量化（vectorization）。
-  - 
-  - 大小相等的数组之间的任何算术运算都会将运算应用到元素级别
-  - 大小相同的数组之间的比较会生成布尔值数组
+  - 矢量化（vectorization）：不用编写循环即可对数据执行批量运算
+  - 大小相等的数组之间
+    - 任何算术运算都会将运算应用到元素级别
+    - 比较会生成布尔值数组
+  - 不同大小的数组之间的运算叫做广播（broadcasting）
   - 数组与标量的算术运算会将标量值传播到各个元素
-  - 不同大小的数组之p间的运算叫做广播（broadcasting）
   
-- Index and Slice
-  - 一维数组
+- basic Index&Slice
+  - 数组的切片是原数组的视图，即对视图的修改都会反映到原数组上
+  - 一维数组，与python列表切片类似
     ```Python
     arr = np.arange(10)
     # 与 list 取值类似
@@ -107,14 +109,15 @@ alist = [[x for x in tup] for tup in some_tuples]
     arr[5:8][:] =64
     ```
   - 二维数组
-    - 各索引位置上的元素不再是标量而是一维数组
+    - 每个索引值对应的是一个一维数组
+    - 可将 0 轴看作行，1 轴看作列
       ```Python
       arr2d = np.array([[1, 2 ,3], [4, 5, 6], [7, 8, 9]])
       arr2d[2] # array([7, 8, 9])
       arr2d[2][0] == arr2d[2, 0] # 7
       ```
   - arr3d
-    - 在多维数组中，如果省略了后面的索引，则返回对象会是一个维度低一点的ndarray
+    - 在多维数组中，可以省略后续的索引值，返回对象会是降低一个维度的数组
     ```Python
     arr3d = np.array([[[1, 2, 3], [4, 5, 6]], 
                       [[7, 8, 9], [10, 11, 12]]])
@@ -123,7 +126,7 @@ alist = [[x for x in tup] for tup in some_tuples]
     arr3d[1, 0] # array([7, 8, 9]) 
     
     # 标量值和数组都可以被赋值给arr3d[0]
-    old_value = arr3d[0].copy()
+    old_value = arr3d[0].copy() 
     arr3d[0] = 34 # array([[34, 34, 34], [34, 34, 34]])
     arr3d[0]=old_value
     ```
