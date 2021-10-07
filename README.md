@@ -50,21 +50,23 @@ alist = [[x for x in tup] for tup in some_tuples]
 ## 4 Numpy 基础
 ### 4.1 numpy: ndarray 
 - import numpy as np
+
 - **bool/fancy Indexing** 将数据复制到新表中
 - **切片生成视图**，对其修改会改变源数据
-- NumPy N维数组对象`ndarray`, 是一个快速而灵活的大数据集容器。
-- 你可以利用这种数组对整块数据执行一些数学运算，其语法跟标量元素之间的运算一样。
-- ndarray 其中的所有元素必须是相同类型的。
-- 每个数组都有一个shape（一个表示各维度大小的元组）和一个dtype（一个用于说明数组数据类型的对象）
-- 本书中“数组”、“NumPy数组”、”ndarray”时，基本上都指的是同一样东西，即ndarray对象
-  ```Python
+- **DataFrame** 选取列生成视图
+- **astype** 生成新数组
+
+- NumPy N维数组对象`ndarray`, 大数据集容器
+- ndarray 其中的所有元素必须是相同类型的
+
+  ```Python 
   data = np.random.randn(2,3)
   data + data, data * 10
   data.shape # (2, 3)
   data.dtype # dtype('float64')
   data.ndim  # 2 
   ```
-- Creat ndarraay
+- Creat ndarray
   ```Python
   data2 = np.array([1, 2, 3,], [4, 5, 6])
   np.zeros(10)
@@ -74,6 +76,7 @@ alist = [[x for x in tup] for tup in some_tuples]
 - Method
   - shape 代表维度
   - dtype 代表类型
+  - ndim
   - array
   - arange
   - random.randn()
@@ -97,7 +100,7 @@ alist = [[x for x in tup] for tup in some_tuples]
   - 不同大小的数组之间的运算叫做广播（broadcasting）
   - 数组与标量的算术运算会将标量值传播到各个元素
   
-- basic Index&Slice
+- **basic Index&Slice**
   - 数组的切片是原数组的视图，即对视图的修改都会反映到原数组上
   - 一维数组，与python列表切片类似
     ```Python
@@ -135,14 +138,14 @@ alist = [[x for x in tup] for tup in some_tuples]
 - 切片索引
   - arr1d
   `arr[1:6] # like Python list`
-  - arrNd
-    - `arr2d[:2]`它是沿着第0轴（即第一个轴）切片的。
-    - 切片是沿着一个轴向选取元素的。
-    - 表达式`arr2d[:2]`可以被认为是“选取arr2d的前两行”
-    - 一次传入多个切片 `arr2d[:2, 1:]`,像这样进行切片时，只能得到相同维数的数组视图
-    - 将整数索引和切片混合，可以得到低维度的切片 `arr2d[1, :2]` 选取第二行的前两列
-    - “只有冒号”表示选取整个轴 `arr2d[:, :1]`
+  - [x]**arrNd**
+    - `arr2d[:2]`它是沿着第0轴（即第一个轴）切片的
+    - `arr2d[:2]`是“选取arr2d的前两行”
+    - `arr2d[:2, 1:]` 多位数组视图
+    - `arr2d[1, :2]` 选取第二行的前两列
+    - `arr2d[:, :1]` 冒号选取整个轴
     - 对切片表达式的赋值操作也会被扩散到整个选区
+    - 切片是沿着一个轴向选取元素的
 
 - 布尔型索引 --将数据复制到新表中--同fancy indexing
   - 通过布尔型索引选取数组中的数据，将总是创建数据的副本，即使返回一模一样的数组也是如此
@@ -183,6 +186,7 @@ alist = [[x for x in tup] for tup in some_tuples]
          [28, 29, 30, 31]])
 
   In [5]: arr[[1, 5, 7, 2], [0, 3, 1, 2]]
+  # 得到一维数组
   Out[5]: array([ 4, 23, 29, 10])
 
   In [6]: arr[[1, 3, 5, 7], [:, [0, 1, 3, 2]]]
@@ -192,6 +196,7 @@ alist = [[x for x in tup] for tup in some_tuples]
   SyntaxError: invalid syntax
 
   In [7]: arr[[1, 3, 5, 7]][:, [0, 3, 1, 2]]
+  # 得到二维数组切片
   Out[7]:
   array([[ 4,  7,  5,  6],
          [12, 15, 13, 14],
