@@ -541,7 +541,45 @@ alist = [[x for x in tup] for tup in some_tuples]
   frame.sub(series3, axis='index')
   ```
   
-  
+- 函数应用、映射 df.apply
+```python
+In [119]: frame = pd.DataFrame(np.random.randn(4, 3),
+     ...:                      columns=list('bde'),
+     ...:                      index=['Utah', 'Ohio', 'Texas', 'Oregon'])
+In [123]: f = lambda x: x.max() - x.min()
+In [124]: frame.apply(f)
+Out[124]:
+b    1.587911
+d    1.782520
+e    2.216635
+dtype: float64
+
+# 用到 columns 列
+In [125]: frame.apply(f, axis=1)
+Out[125]:
+Utah      1.259100
+Ohio      1.484212
+Texas     1.426086
+Oregon    1.315225
+dtype: float64
+
+In [129]: def f(x):
+     ...:     return pd.Series([x.min(), x.max()], index=['min', 'max'])
+
+In [130]: frame.apply(f)
+Out[130]:
+            b         d         e
+min -0.201364 -0.039539 -0.816627
+max  1.386547  1.742981  1.400008
+```
+
+- 排序
+  - 对索引 sort_index() 
+  - 对值 sort_values(by=['a', 'b'])
+- 排名
+  - rank()???
+
+
 ### 5.3 汇总和计算描述统计
 - 从Series中提取单个值（如sum或mean）
 - 从DataFrame的行或列中提取一个Series。
