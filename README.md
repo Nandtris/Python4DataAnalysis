@@ -59,6 +59,8 @@ alist = [[x for x in tup] for tup in some_tuples]
 - NumPy N维数组对象`ndarray`, 大数据集容器
 - ndarray 其中的所有元素必须是相同类型的
 
+- 附录A3 **广播规则**
+
   ```Python 
   data = np.random.randn(2,3)
   data + data, data * 10
@@ -138,7 +140,7 @@ alist = [[x for x in tup] for tup in some_tuples]
 - 切片索引
   - arr1d
   `arr[1:6] # like Python list`
-  - [x]**arrNd**
+  - [X] **arrNd**
     - `arr2d[:2]`它是沿着第0轴（即第一个轴）切片的
     - `arr2d[:2]`是“选取arr2d的前两行”
     - `arr2d[:2, 1:]` 多位数组视图
@@ -186,7 +188,7 @@ alist = [[x for x in tup] for tup in some_tuples]
          [28, 29, 30, 31]])
 
   In [5]: arr[[1, 5, 7, 2], [0, 3, 1, 2]]
-  # 得到一维数组
+  # 得到一维数组 相当于 (1, 0),(5, 3),...
   Out[5]: array([ 4, 23, 29, 10])
 
   In [6]: arr[[1, 3, 5, 7], [:, [0, 1, 3, 2]]]
@@ -227,10 +229,7 @@ alist = [[x for x in tup] for tup in some_tuples]
   ```
   
 ### 4.3 利用数组进行数据处理
-- 用数组表达式代替循环的做法，通常被称为矢量化
-- 一般来说，矢量化数组运算要比等价的纯Python方式快上一两个数量级（甚至更多），尤其是各种数值计算
-- 广播，是一种针对矢量化计算的强大手段
-
+- 附录A 广播
 - 将条件逻辑表达为数组运算
   - np.where
     ```Python
@@ -246,13 +245,14 @@ alist = [[x for x in tup] for tup in some_tuples]
   - 通过数组上的一组数学函数对整个数组或某个轴向的数据进行统计计算
   - sum、mean等聚合计算既可以当做数组的实例方法调用，也可以当做顶级NumPy函数使用
   - `arr.mean(), np.mean(arr)`
-  - `arr.mean(axis=1)` 计算行的平均值 ？？？
-  - `arr.sum(axis=0)` 计算列的的和 ？？？
+  - `arr.mean(axis=1)` 沿着轴 1 计算均值
+  - `arr.sum(axis=0)` 
   - `arr.cumsum(axis=0)` 多维数组，沿着0轴累加
   - `arr.cumprod(axis=1)` 多维数组，沿着1轴累积
+  
 - 用于布尔型数组的方法
   - 布尔值会被强制转换为1（True）和0（False）
-  - sum经常被用来对布尔型数组中的True值计数
+  - sum: True值计数
     ```Pyhton
     arr = np.random.randn(100)
     np.sum(arr > 0) # number of positive values
