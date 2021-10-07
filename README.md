@@ -447,6 +447,9 @@ alist = [[x for x in tup] for tup in some_tuples]
     data.drop(['one', 'two'], axis=1, inplace=True)
     ```
 - 索引 选取 过滤
+  - Series
+  - DataFrame
+  
   ```Python
   # Series
   obj = pd.Series(np.arange(4.), index=['a', 'b', 'c', 'd'])
@@ -460,19 +463,21 @@ alist = [[x for x in tup] for tup in some_tuples]
   data = pd.DataFrame(np.arange(16).reshape((4, 4)),
                     index=['Ohio', 'Colorado', 'Utah', 'New York'],
                     columns=['one', 'two', 'three', 'four'])
-  # 用一个值或序列对DataFrame进行索引其实就是获取一个或多个列
-  向[ ]传递单一的元素或列表，就可选择列
+  # 选列
   data['two']
   data[['three', 'one']]
   
   #切片或布尔型数组选取数据
   data[:2] # 前两行
-  data[data['three'] > 5]
+  data[data['three'] > 5] # True 行
   
+  # 布尔值
   data < 5
   data[data < 5] = 0
   ```
-- 轴标签（loc）或整数索引（iloc）
+- DataFrame ~ **loc iloc**
+  - ioc  轴标签
+  - iloc 整数标签
   
   ```Python
   data.loc['Colorado', ['two', 'three']]
@@ -486,6 +491,8 @@ alist = [[x for x in tup] for tup in some_tuples]
 - 整数索引
   - 如果轴索引含有整数，数据选取总会使用标签。
   - 为了更准确，请使用loc（标签）或iloc（整数）
+  - ser[-1] # KeyError
+  - 
   
 - 算术运算和数据对齐
   - 对不同索引的对象进行算术运算
@@ -514,7 +521,8 @@ alist = [[x for x in tup] for tup in some_tuples]
     1/df1 = df1.rdiv(1)
     ```
 - DataFrame和Series之间算术运算
-  - arr2d减去arr2d[0]，每一行都会执行这个操作。这就叫做广播（broadcasting）
+  - 广播（broadcasting）
+  
   ```Python
   frame = pd.DataFrame(np.arange(12.).reshape(4, 3),
                     columns = list('bde'),
@@ -532,6 +540,8 @@ alist = [[x for x in tup] for tup in some_tuples]
   series3 = frame['d']
   frame.sub(series3, axis='index')
   ```
+  
+  
 ### 5.3 汇总和计算描述统计
 - 从Series中提取单个值（如sum或mean）
 - 从DataFrame的行或列中提取一个Series。
