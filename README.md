@@ -857,7 +857,7 @@ import pymysql
 from sqlalchemy import create_engine
 import numpy as np, pandas as pd
 
-engine = create_engine('mysql+pymysql://root:542643364@localhost:3306/db2?charset=utf8mb4')
+engine = create_engine('mysql+pymysql://root:password@localhost:3306/db2?charset=utf8mb4')
 sql = 'select * from score;'
 
 # Read MySql files
