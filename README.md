@@ -1072,6 +1072,7 @@ df.to_sql('ex1', engine, index=False)
   # 随机重排列 df 0 轴索引
   sampler = np.random.permutation(5)
   df.take(sampler)
+  df.iloc[sampler]
   
   # 产生随机子集
   # sample: Series和DataFrame
