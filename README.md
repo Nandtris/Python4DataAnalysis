@@ -1084,8 +1084,8 @@ df.to_sql('ex1', engine, index=False)
   
 - 计算指标/哑变量
 
-### 7.3 字符串操作
-- regex
+### 7.3 字符串操作 re
+- re
   - re模块的函数可以分为三个大类：模式匹配、替换以及拆分
   - 描述一个或多个空白符 `\s+`
   - re.compile
@@ -1095,7 +1095,8 @@ df.to_sql('ex1', engine, index=False)
   - regex.search
   - regex.match
   - regex.sub
-
+- Special characters lose their special meaning inside sets. 
+- For example, [(+*)] will match any of the literal characters '(', '+', '*', or ')'.
 - pandas的矢量化字符串函数
   - pansas.Series.str.xx
   - ...
