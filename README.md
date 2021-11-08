@@ -1095,6 +1095,35 @@ df.to_sql('ex1', engine, index=False)
   - regex.search
   - regex.match
   - regex.sub
+```python3
+#!/usr/bin/env python
+
+from random import randint, choice
+from string import ascii_lowercase
+from sys import maxsize
+from time import ctime
+
+doms = ('com', 'edu', 'net', 'org', 'gov')
+
+for i in range(randint(5, 10)):
+    dfint = randint(0, maxsize-1)
+    dtstr = ctime(dfint)
+
+    shorter = randint(4, 7)
+    em = ''
+    for j in range(shorter):
+        em += choice(ascii_lowercase)
+
+    longer = randint(shorter, 12)
+    dn = ''
+    for j in range(longer):
+        dn += choice(ascii_lowercase)
+
+    tmp = f'{dtstr}::{em}@{dn}.{choice(doms)}::{dfint}-{shorter}-{longer}'+'\n'
+    print(tmp)
+    with open(r'e:\redata.txt', 'a') as fi:
+        fi.write(tmp)
+```
 - Special characters lose their special meaning inside sets. 
 - For example, [(+*)] will match any of the literal characters '(', '+', '*', or ')'.
 - pandas的矢量化字符串函数
